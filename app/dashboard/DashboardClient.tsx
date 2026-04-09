@@ -177,11 +177,11 @@ export default function DashboardClient({
   }
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="flex min-h-screen bg-gradient-to-br [#070d1a]">
       {/* Sidebar */}
       <aside className="w-60 shrink-0 border-r border-white/10 flex flex-col py-8 px-4">
         <Link href="/" className="text-xl font-black text-white tracking-tight px-2 mb-10">
-          Hustle<span className="text-purple-400">Guide</span>
+          Hustle<span className="text-emerald-400">Guide</span>
         </Link>
 
         <nav className="flex-1 space-y-1">
@@ -191,7 +191,7 @@ export default function DashboardClient({
               onClick={() => setSection(item.section)}
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                 section === item.section
-                  ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
+                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
                   : 'text-slate-400 hover:text-white hover:bg-white/5'
               }`}
             >
@@ -205,7 +205,7 @@ export default function DashboardClient({
           {!isPro && (
             <button
               onClick={() => setShowUpgrade(true)}
-              className="w-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 hover:from-purple-500/30 hover:to-pink-500/30 border border-purple-500/30 text-purple-300 text-sm font-bold px-3 py-2.5 rounded-xl transition-all text-left flex items-center gap-2"
+              className="w-full bg-gradient-to-r from-emerald-500/20 to-teal-500/20 hover:from-emerald-500/30 hover:to-teal-500/30 border border-emerald-500/30 text-emerald-300 text-sm font-bold px-3 py-2.5 rounded-xl transition-all text-left flex items-center gap-2"
             >
               <span>⚡</span> Upgrade to Pro
             </button>
@@ -263,12 +263,12 @@ export default function DashboardClient({
 
             {/* Plan banner */}
             {atGuideLimit && (
-              <div className="bg-purple-500/10 border border-purple-500/30 rounded-xl px-4 py-3 flex items-center justify-between">
-                <span className="text-purple-300 text-sm">
+              <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl px-4 py-3 flex items-center justify-between">
+                <span className="text-emerald-300 text-sm">
                   {isPro ? `Max ${PRO_GUIDE_LIMIT} guides on Pro.` : 'Free plan: 1 guide max.'} Delete a guide to create another.
                 </span>
                 {!isPro && (
-                  <button onClick={() => setShowUpgrade(true)} className="text-xs bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/40 text-purple-300 font-bold px-3 py-1.5 rounded-lg transition-colors">
+                  <button onClick={() => setShowUpgrade(true)} className="text-xs bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 font-bold px-3 py-1.5 rounded-lg transition-colors">
                     Upgrade
                   </button>
                 )}
@@ -277,10 +277,10 @@ export default function DashboardClient({
 
             {/* Active guide card */}
             {activeGuide ? (
-              <div className="bg-gradient-to-r from-purple-500/15 to-pink-500/10 border border-purple-500/30 rounded-2xl p-6">
+              <div className="bg-gradient-to-r from-emerald-500/15 to-teal-500/10 border border-emerald-500/30 rounded-2xl p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div>
-                    <div className="text-xs text-purple-400 font-bold uppercase tracking-wider mb-1">Active Guide</div>
+                    <div className="text-xs text-emerald-400 font-bold uppercase tracking-wider mb-1">Active Guide</div>
                     <h2 className="text-xl font-black text-white">{activeGuide.path_name}</h2>
                     <p className="text-slate-400 text-sm mt-1">
                       Week {activeGuide.weeks_unlocked} of 12 in progress
@@ -296,7 +296,7 @@ export default function DashboardClient({
                   </div>
                   <div className="h-2 bg-white/10 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full transition-all"
+                      className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full transition-all"
                       style={{ width: `${(activeGuide.weeks_unlocked / 12) * 100}%` }}
                     />
                   </div>
@@ -308,7 +308,7 @@ export default function DashboardClient({
                 <div className="flex items-center gap-3">
                   <Link
                     href={`/guide?path=${encodeURIComponent(activeGuide.path_name)}&id=${activeGuide.id}`}
-                    className="inline-block bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-400 hover:to-pink-400 text-white font-bold px-6 py-2.5 rounded-xl transition-all text-sm"
+                    className="inline-block bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-white font-bold px-6 py-2.5 rounded-xl transition-all text-sm"
                   >
                     Continue Week {activeGuide.weeks_unlocked} →
                   </Link>
@@ -330,7 +330,7 @@ export default function DashboardClient({
                 </p>
                 <Link
                   href="/onboarding"
-                  className="inline-block bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-400 hover:to-pink-400 text-white font-bold px-6 py-2.5 rounded-xl transition-all text-sm"
+                  className="inline-block bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-white font-bold px-6 py-2.5 rounded-xl transition-all text-sm"
                 >
                   Start Questionnaire →
                 </Link>
@@ -384,7 +384,7 @@ export default function DashboardClient({
                           <div className="flex items-center gap-2 mt-0.5">
                             <div className="w-20 h-1 bg-white/10 rounded-full overflow-hidden">
                               <div
-                                className="h-full bg-purple-500 rounded-full"
+                                className="h-full bg-emerald-500 rounded-full"
                                 style={{ width: `${(g.weeks_unlocked / 12) * 100}%` }}
                               />
                             </div>
@@ -395,7 +395,7 @@ export default function DashboardClient({
                         <Link
                           href={`/guide?path=${encodeURIComponent(g.path_name)}&id=${g.id}`}
                           onClick={e => e.stopPropagation()}
-                          className="text-purple-400 hover:text-purple-300 text-xs opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+                          className="text-emerald-400 hover:text-emerald-300 text-xs opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
                         >
                           Open →
                         </Link>
@@ -430,14 +430,14 @@ export default function DashboardClient({
               {isPro || guides.length === 0 ? (
                 <Link
                   href="/onboarding"
-                  className="text-purple-400 hover:text-purple-300 text-sm font-medium transition-colors"
+                  className="text-emerald-400 hover:text-emerald-300 text-sm font-medium transition-colors"
                 >
                   + New Guide
                 </Link>
               ) : (
                 <button
                   onClick={() => setShowUpgrade(true)}
-                  className="text-purple-400 hover:text-purple-300 text-sm font-medium transition-colors"
+                  className="text-emerald-400 hover:text-emerald-300 text-sm font-medium transition-colors"
                 >
                   + New Guide (Pro)
                 </button>
@@ -463,12 +463,12 @@ export default function DashboardClient({
                         <span className="text-xl">{p.emoji}</span>
                         <span className="text-white font-bold text-sm">{p.name}</span>
                       </div>
-                      <span className="text-purple-400 text-xs font-bold">{p.matchPercent}%</span>
+                      <span className="text-emerald-400 text-xs font-bold">{p.matchPercent}%</span>
                     </div>
                     <p className="text-slate-400 text-xs leading-relaxed mb-3">{p.description}</p>
                     <div className="h-1 bg-white/10 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"
+                        className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full"
                         style={{ width: `${p.matchPercent}%` }}
                       />
                     </div>
@@ -478,7 +478,7 @@ export default function DashboardClient({
             ) : (
               <div className="bg-white/5 border border-white/10 rounded-2xl p-8 text-center">
                 <p className="text-slate-400">Complete the questionnaire to see your matched paths.</p>
-                <Link href="/onboarding" className="inline-block mt-4 text-purple-400 hover:text-purple-300 text-sm font-medium">
+                <Link href="/onboarding" className="inline-block mt-4 text-emerald-400 hover:text-emerald-300 text-sm font-medium">
                   Take Questionnaire →
                 </Link>
               </div>
@@ -496,10 +496,10 @@ export default function DashboardClient({
 
             <div className="grid grid-cols-2 gap-4">
               {[
-                { label: 'Total Guides', value: guides.length, icon: '📋', color: 'purple' },
+                { label: 'Total Guides', value: guides.length, icon: '📋', color: 'emerald' },
                 { label: 'Weeks Completed', value: totalWeeksCompleted, icon: '✅', color: 'green' },
                 { label: 'Check-Ins Submitted', value: totalCheckIns, icon: '📝', color: 'blue' },
-                { label: 'Weeks Remaining', value: Math.max(0, guides.length * 12 - totalWeeksCompleted), icon: '🎯', color: 'pink' },
+                { label: 'Weeks Remaining', value: Math.max(0, guides.length * 12 - totalWeeksCompleted), icon: '🎯', color: 'teal' },
               ].map(s => (
                 <div key={s.label} className="bg-white/5 border border-white/10 rounded-xl p-5">
                   <div className="flex items-start justify-between mb-3">
@@ -522,7 +522,7 @@ export default function DashboardClient({
                     </div>
                     <div className="h-2 bg-white/10 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"
+                        className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full"
                         style={{ width: `${(g.weeks_unlocked / 12) * 100}%` }}
                       />
                     </div>
@@ -549,7 +549,7 @@ export default function DashboardClient({
                   <div className="flex items-center gap-2 mb-1">
                     <span className={`text-sm font-bold px-2 py-0.5 rounded-full ${
                       isPro
-                        ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
+                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
                         : 'bg-white/10 text-slate-400'
                     }`}>
                       {isPro ? 'Pro' : 'Free'}
@@ -564,7 +564,7 @@ export default function DashboardClient({
                 {!isPro && (
                   <button
                     onClick={() => setShowUpgrade(true)}
-                    className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-400 hover:to-pink-400 text-white font-bold px-4 py-2 rounded-xl text-sm transition-all"
+                    className="bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-white font-bold px-4 py-2 rounded-xl text-sm transition-all"
                   >
                     Upgrade
                   </button>

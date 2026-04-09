@@ -878,7 +878,7 @@ export default function GuideClient({
                   {allCriteriaDone ? '✓' : planLocked ? '⭐' : !canAccess ? '🔒' : n}
                 </span>
                 <span className="truncate flex-1">{week ? week.theme : `Week ${n}`}</span>
-                {planLocked && <span className="text-xs text-purple-500 shrink-0">Pro</span>}
+                {planLocked && <span className="text-xs text-emerald-500 shrink-0">Pro</span>}
               </button>
             )
           })}
@@ -889,7 +889,7 @@ export default function GuideClient({
           {!isPro && (
             <button
               onClick={() => setShowUpgrade(true)}
-              className="w-full text-xs bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-purple-400 px-3 py-2 rounded-lg transition-colors font-medium"
+              className="w-full text-xs bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 px-3 py-2 rounded-lg transition-colors font-medium"
             >
               ⭐ Unlock all weeks
             </button>
@@ -908,7 +908,7 @@ export default function GuideClient({
         <div className="sticky top-0 bg-gray-950/90 backdrop-blur border-b border-gray-800 px-6 py-3 z-10 flex items-center justify-between">
           <span className="text-xs text-gray-500">
             {guide.weeks.length} week{guide.weeks.length !== 1 ? 's' : ''} generated
-            {!isPro && <span className="ml-2 text-purple-500">· Free plan: weeks 1–{FREE_WEEK_LIMIT}</span>}
+            {!isPro && <span className="ml-2 text-emerald-500">· Free plan: weeks 1–{FREE_WEEK_LIMIT}</span>}
           </span>
           {checkedInWeeks.size > 0 && (
             <span className="text-xs text-emerald-500 font-medium">
@@ -934,7 +934,7 @@ export default function GuideClient({
                   <p className="text-gray-500 text-sm mb-5">Free plan includes weeks 1–{FREE_WEEK_LIMIT}. Upgrade to unlock all 12 weeks.</p>
                   <button
                     onClick={() => setShowUpgrade(true)}
-                    className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold px-6 py-2.5 rounded-xl text-sm"
+                    className="bg-gradient-to-r from-emerald-500 to-teal-400 text-white font-bold px-6 py-2.5 rounded-xl text-sm"
                   >
                     Upgrade to Pro →
                   </button>
