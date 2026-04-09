@@ -194,21 +194,21 @@ export default function LandingClient() {
       name: 'Marco, 24',
       location: 'Italy',
       color: 'bg-orange-500',
-      quote: 'I tried dropshipping twice and failed. HustleGuide matched me to freelance video editing and I made my first €300 in week 3.',
+      quote: 'I tried dropshipping twice and gave up. HustleGuide matched me to freelance video editing and I made my first €300 in week 3. Should have started here.',
     },
     {
       avatar: 'S',
       name: 'Sofia, 31',
       location: 'Spain',
       color: 'bg-purple-500',
-      quote: 'I had no idea where to start. The quiz took 2 minutes and the guide was genuinely specific to my situation — not generic advice.',
+      quote: 'I had no clue where to start. The quiz took 2 minutes and the plan it gave me was actually tailored to my situation, not just copy-pasted advice from Reddit.',
     },
     {
       avatar: 'J',
       name: 'James, 27',
       location: 'UK',
       color: 'bg-blue-500',
-      quote: 'Week 4 of my SEO consulting path. Already have two retainer clients. The AI coach is what makes it — I ask questions every day.',
+      quote: 'Week 4 of my SEO consulting path and I already landed two retainer clients. Honestly the AI coach is what sold me. I use it every single day.',
     },
   ]
 
@@ -221,40 +221,40 @@ export default function LandingClient() {
     {
       icon: '📅',
       title: 'Week by week',
-      desc: 'Specific daily tasks, scripts, and tools — not "build an audience" type advice.',
+      desc: 'Specific daily tasks, scripts, and tools. Not "build an audience" type advice.',
     },
     {
       icon: '🔄',
       title: 'Adapts as you go',
-      desc: 'Every new week is generated from your actual progress report. It grows with you.',
+      desc: 'Every new week is generated from your real progress. It grows as you do.',
     },
     {
       icon: '💬',
       title: 'AI coach included',
-      desc: 'Ask anything, anytime. Your coach knows your path, your week, and your situation.',
+      desc: 'Ask anything, anytime. Your coach knows your path, your week, and where you are.',
     },
   ]
 
   const FAQS = [
     {
       q: 'Is this actually free?',
-      a: 'Yes. You can take the quiz, get matched, and complete one full guide for free. Pro unlocks all three of your matched paths and unlimited AI coaching.',
+      a: 'Yes. You can take the quiz, get matched, and follow one full 12-week guide for free. Pro unlocks all three of your matched paths and removes the AI coaching limit.',
     },
     {
       q: 'How is this different from just asking ChatGPT?',
-      a: 'ChatGPT gives generic advice. HustleGuide builds a plan around your specific hours, budget, location, and skills — and updates it every week based on your actual progress. It\'s a living roadmap, not a chat.',
+      a: 'ChatGPT gives you generic advice. HustleGuide builds a plan around your specific hours, budget, location, and skills. And every week it updates based on your actual progress. It\'s a roadmap that moves with you, not a chat window.',
     },
     {
       q: 'What if I pick the wrong path?',
-      a: 'You can retake the quiz anytime and generate a new set of matches. Your situation changes — your plan should too.',
+      a: 'Retake the quiz and generate a new set of matches. Your situation changes and your plan should change with it.',
     },
     {
       q: 'How long until I make money?',
-      a: 'It depends on the path and how much time you put in. We give honest, conservative estimates — not hype. Most paths show first results between week 3 and week 8.',
+      a: 'Depends on the path and how much time you put in. We give honest, realistic estimates. Most people see first results somewhere between week 3 and week 8.',
     },
     {
       q: 'Can I cancel Pro anytime?',
-      a: 'Yes. Cancel in one click from your settings. No questions asked, no awkward retention flows.',
+      a: 'Yes, one click from your settings. No questions, no guilt trips, no retention flows.',
     },
   ]
 
@@ -377,7 +377,7 @@ export default function LandingClient() {
               {
                 n: '01', icon: '🧠',
                 title: 'Answer 8 honest questions',
-                desc: 'Tell us your available time, budget, skills, and income goal. No fluff — just what we need to match you accurately.',
+                desc: 'Tell us your available time, budget, skills, and income goal. No fluff, just what we need to match you accurately.',
               },
               {
                 n: '02', icon: '🎯',

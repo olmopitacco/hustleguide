@@ -45,11 +45,11 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[#070d1a] flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="text-2xl font-black text-white tracking-tight">
-            Hustle<span className="text-purple-400">Guide</span>
+            Hustle<span className="text-emerald-400">Guide</span>
           </Link>
           <h1 className="text-3xl font-black text-white mt-4 mb-2">Welcome back</h1>
           <p className="text-slate-400">Sign in to continue your hustle journey</p>
@@ -86,7 +86,7 @@ export default function LoginPage() {
                 onChange={e => setEmail(e.target.value)}
                 required
                 placeholder="you@example.com"
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 transition-colors"
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors"
               />
             </div>
             <div>
@@ -97,7 +97,7 @@ export default function LoginPage() {
                 onChange={e => setPassword(e.target.value)}
                 required
                 placeholder="••••••••"
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 transition-colors"
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors"
               />
             </div>
 
@@ -110,7 +110,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-400 hover:to-pink-400 text-white font-bold py-3 rounded-xl transition-all disabled:opacity-60"
+              className="w-full bg-emerald-500 hover:bg-emerald-400 text-white font-bold py-3 rounded-xl transition-all disabled:opacity-60 shadow-lg shadow-emerald-500/20"
             >
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
@@ -119,7 +119,7 @@ export default function LoginPage() {
 
         <p className="text-center text-slate-400 text-sm mt-6">
           Don&apos;t have an account?{' '}
-          <Link href="/signup" className="text-purple-400 hover:text-purple-300 font-medium">
+          <Link href="/signup" className="text-emerald-400 hover:text-emerald-300 font-medium">
             Sign up free
           </Link>
         </p>

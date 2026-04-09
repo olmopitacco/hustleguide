@@ -174,11 +174,11 @@ export default function OnboardingPage() {
   // ─── Analyzing screen ───────────────────────────────────────────────────
   if (analyzing) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-[#070d1a] flex items-center justify-center">
         <div className="text-center">
           <div className="relative w-20 h-20 mx-auto mb-8">
-            <div className="absolute inset-0 rounded-full border-4 border-purple-500/20"></div>
-            <div className="absolute inset-0 rounded-full border-4 border-t-purple-400 animate-spin"></div>
+            <div className="absolute inset-0 rounded-full border-4 border-emerald-500/20"></div>
+            <div className="absolute inset-0 rounded-full border-4 border-t-emerald-400 animate-spin"></div>
             <div className="absolute inset-0 flex items-center justify-center text-2xl">🤖</div>
           </div>
           <h2 className="text-3xl font-black text-white mb-3">Analyzing your profile...</h2>
@@ -187,7 +187,7 @@ export default function OnboardingPage() {
             {[0, 1, 2].map(i => (
               <div
                 key={i}
-                className="w-2 h-2 rounded-full bg-purple-400 animate-bounce"
+                className="w-2 h-2 rounded-full bg-emerald-400 animate-bounce"
                 style={{ animationDelay: `${i * 0.15}s` }}
               />
             ))}
@@ -205,13 +205,13 @@ export default function OnboardingPage() {
     : 'opacity-100 translate-x-0'
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex flex-col">
+    <div className="min-h-screen bg-[#070d1a] flex flex-col">
 
       {/* Top bar */}
       <div className="px-6 pt-6 max-w-2xl mx-auto w-full">
         <div className="flex items-center justify-between mb-4">
           <span className="text-xl font-black text-white tracking-tight">
-            Hustle<span className="text-purple-400">Guide</span>
+            Hustle<span className="text-emerald-400">Guide</span>
           </span>
           <span className="text-slate-400 text-sm font-medium">
             {current + 1} / {QUESTIONS.length}
@@ -221,7 +221,7 @@ export default function OnboardingPage() {
         {/* Progress bar */}
         <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
           <div
-            className="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full transition-all duration-500 ease-out"
+            className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full transition-all duration-500 ease-out"
             style={{ width: `${progress + (100 / QUESTIONS.length)}%` }}
           />
         </div>
@@ -234,7 +234,7 @@ export default function OnboardingPage() {
         >
           {/* Question label */}
           <div className="mb-8">
-            <div className="text-purple-400 text-sm font-semibold uppercase tracking-widest mb-3">
+            <div className="text-emerald-400 text-sm font-semibold uppercase tracking-widest mb-3">
               Question {current + 1}
             </div>
             <h2 className="text-2xl md:text-3xl font-black text-white leading-snug">
@@ -259,7 +259,7 @@ export default function OnboardingPage() {
                     onClick={() => handleSingle(q.id, opt)}
                     className={`text-left px-5 py-4 rounded-xl border font-semibold text-sm transition-all duration-150
                       ${selected
-                        ? 'bg-purple-500 border-purple-400 text-white shadow-lg shadow-purple-500/25'
+                        ? 'bg-emerald-500 border-emerald-400 text-white shadow-lg shadow-emerald-500/25'
                         : 'bg-white/5 border-white/10 text-slate-200 hover:bg-white/10 hover:border-white/20'
                       }`}
                   >
@@ -281,7 +281,7 @@ export default function OnboardingPage() {
                     onClick={() => handleMultiToggle(q.id, opt)}
                     className={`text-left px-4 py-3.5 rounded-xl border font-semibold text-sm transition-all duration-150 flex items-center gap-2
                       ${selected
-                        ? 'bg-purple-500 border-purple-400 text-white shadow-lg shadow-purple-500/25'
+                        ? 'bg-emerald-500 border-emerald-400 text-white shadow-lg shadow-emerald-500/25'
                         : 'bg-white/5 border-white/10 text-slate-200 hover:bg-white/10 hover:border-white/20'
                       }`}
                   >
@@ -289,7 +289,7 @@ export default function OnboardingPage() {
                       ${selected ? 'bg-white border-white' : 'border-slate-500'}`}
                     >
                       {selected && (
-                        <svg className="w-2.5 h-2.5 text-purple-600" fill="none" viewBox="0 0 10 8">
+                        <svg className="w-2.5 h-2.5 text-emerald-600" fill="none" viewBox="0 0 10 8">
                           <path d="M1 4l3 3 5-6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                       )}
@@ -311,7 +311,7 @@ export default function OnboardingPage() {
                 onChange={e => setTextValue(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter' && canAdvance()) handleNext() }}
                 placeholder={q.placeholder}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white text-lg placeholder-slate-500 focus:outline-none focus:border-purple-500 transition-colors"
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white text-lg placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors"
               />
             </div>
           )}
@@ -342,7 +342,7 @@ export default function OnboardingPage() {
               disabled={!canAdvance() || animating}
               className={`ml-auto flex items-center gap-2 font-bold text-sm px-6 py-3 rounded-xl transition-all
                 ${canAdvance()
-                  ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-400 hover:to-pink-400 shadow-lg shadow-purple-500/25'
+                  ? 'bg-emerald-500 text-white hover:bg-emerald-400 shadow-lg shadow-emerald-500/25'
                   : 'bg-white/5 text-slate-500 cursor-not-allowed'
                 }`}
             >
@@ -357,7 +357,7 @@ export default function OnboardingPage() {
           {q.type === 'single' && current === QUESTIONS.length - 1 && answers[q.id] && (
             <button
               onClick={handleNext}
-              className="ml-auto flex items-center gap-2 font-bold text-sm px-6 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-400 hover:to-pink-400 shadow-lg shadow-purple-500/25 transition-all"
+              className="ml-auto flex items-center gap-2 font-bold text-sm px-6 py-3 rounded-xl bg-emerald-500 text-white hover:bg-emerald-400 shadow-lg shadow-emerald-500/25 transition-all"
             >
               See My Results
               <svg className="w-4 h-4" fill="none" viewBox="0 0 16 16">
