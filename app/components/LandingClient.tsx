@@ -216,23 +216,23 @@ export default function LandingClient() {
   const FEATURES = [
     {
       icon: <IconTarget className="w-6 h-6" />,
-      title: 'Matched to you',
-      desc: '40+ paths scored against your exact skills, hours, budget, and goals. No guessing.',
+      title: 'Matched to your situation',
+      desc: 'We score 40+ online income paths against your hours, budget, skills, and goals — and show you what actually fits.',
     },
     {
       icon: <IconCalendar className="w-6 h-6" />,
-      title: 'Week by week',
-      desc: 'Specific daily tasks, scripts, and tools. Not "build an audience" type advice.',
+      title: 'Daily tasks, not vague advice',
+      desc: 'Each week gives you specific actions, real scripts, and the exact tools to use. Not "build an audience" type advice.',
     },
     {
       icon: <IconRefresh className="w-6 h-6" />,
-      title: 'Adapts as you go',
-      desc: 'Every new week is generated from your real progress. It grows as you do.',
+      title: 'Updates based on your progress',
+      desc: 'After each week you check in. Your next week is generated from your actual results — not a template.',
     },
     {
       icon: <IconChat className="w-6 h-6" />,
-      title: 'AI coach included',
-      desc: 'Ask anything, anytime. Your coach knows your path, your week, and where you are.',
+      title: 'AI coach on every step',
+      desc: 'Ask anything, anytime. Your coach knows your path, your current week, and your specific situation.',
     },
   ]
 
@@ -276,15 +276,18 @@ export default function LandingClient() {
               Free to start — no credit card
             </div>
 
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black leading-[1.05] mb-6">
-              Stop Googling.<br />
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black leading-[1.05] mb-4">
+              Your personal<br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">
-                Start Earning.
+                income roadmap.
               </span>
             </h1>
 
-            <p className="text-slate-400 text-lg leading-relaxed mb-8 max-w-lg">
-              Answer 8 questions and get a personalized week-by-week roadmap to your first income online — built around your skills, schedule, and situation.
+            <p className="text-slate-300 text-lg leading-relaxed mb-3 max-w-lg font-medium">
+              Answer 8 questions. Get a week-by-week action plan to earn your first money online — matched to your skills, time, and budget.
+            </p>
+            <p className="text-slate-500 text-sm leading-relaxed mb-8 max-w-lg">
+              Not a course. Not generic advice. A real plan built for your situation, with an AI coach that guides you every step of the way.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
@@ -292,10 +295,10 @@ export default function LandingClient() {
                 href="/signup"
                 className="bg-emerald-500 hover:bg-emerald-400 text-white font-bold px-8 py-4 rounded-xl text-base transition-all shadow-xl shadow-emerald-500/30 text-center"
               >
-                Find My Path — It&apos;s Free →
+                Get My Free Roadmap →
               </Link>
             </div>
-            <p className="text-slate-600 text-sm mt-3">No credit card. 2 minutes.</p>
+            <p className="text-slate-600 text-sm mt-3">2 minutes. No credit card. No fluff.</p>
           </div>
 
           <div className="hidden md:block">
@@ -315,8 +318,8 @@ export default function LandingClient() {
                 </svg>
               ))}
             </div>
-            <p className="text-white font-bold text-lg">Join 1,000+ people building income on their own terms</p>
-            <p className="text-slate-500 text-sm mt-1">Rated 4.9/5 by early users</p>
+            <p className="text-white font-bold text-lg">Real people. Real results.</p>
+            <p className="text-slate-500 text-sm mt-1">1,000+ people already building income with HustleGuide</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-5 scroll-reveal-stagger visible">
@@ -343,10 +346,10 @@ export default function LandingClient() {
         <div className="max-w-4xl mx-auto text-center">
           <div className="scroll-reveal">
             <h2 className="text-3xl md:text-4xl font-black mb-4 leading-tight">
-              Everyone tells you to &ldquo;just start&rdquo;.<br />
-              <span className="text-slate-400">Nobody tells you what to actually do.</span>
+              You want to earn online.<br />
+              <span className="text-slate-400">So why haven&apos;t you started yet?</span>
             </h2>
-            <p className="text-slate-500 text-lg mb-14">You&apos;ve seen the YouTube videos. You&apos;ve read the threads. You&apos;re still not earning.</p>
+            <p className="text-slate-500 text-lg mb-14">It&apos;s not motivation you&apos;re missing. It&apos;s a clear, specific plan built for your actual situation.</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6 scroll-reveal-stagger">
@@ -369,26 +372,26 @@ export default function LandingClient() {
       <section id="how-it-works" className="py-24 px-6 bg-white/2 border-y border-white/6">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16 scroll-reveal">
-            <h2 className="text-3xl md:text-4xl font-black mb-3">Your personal roadmap in 3 steps</h2>
-            <p className="text-slate-400">From zero to a personalized plan in under 2 minutes.</p>
+            <h2 className="text-3xl md:text-4xl font-black mb-3">How it works</h2>
+            <p className="text-slate-400">From zero to a personalized income plan in under 2 minutes.</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6 scroll-reveal-stagger">
             {[
               {
                 n: '01', icon: <IconBrain className="w-6 h-6" />,
-                title: 'Answer 8 honest questions',
-                desc: 'Tell us your available time, budget, skills, and income goal. No fluff, just what we need to match you accurately.',
+                title: 'Tell us about yourself',
+                desc: '8 quick questions: your available hours, budget, existing skills, and how fast you need income. Takes 2 minutes.',
               },
               {
                 n: '02', icon: <IconTarget className="w-6 h-6" />,
-                title: 'Get matched to your best paths',
-                desc: 'We score 40+ hustle paths against your exact profile and show you the top 3 with realistic income estimates.',
+                title: 'Get your top 3 matched paths',
+                desc: 'We score 40+ online income paths against your profile and show the best fits — with realistic earnings and timelines.',
               },
               {
                 n: '03', icon: <IconTrendUp className="w-6 h-6" />,
-                title: 'Follow a guide that grows with you',
-                desc: 'Each week\'s plan is generated based on your check-in from the previous week. It adapts to your real progress.',
+                title: 'Follow your week-by-week plan',
+                desc: 'Each week you get specific daily tasks, scripts, and tools. Complete it, check in, and your next week adapts to your actual progress.',
               },
             ].map(s => (
               <div key={s.n} className="relative bg-[#0d1421] border border-white/8 rounded-2xl p-6">
@@ -407,10 +410,10 @@ export default function LandingClient() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16 scroll-reveal">
             <h2 className="text-3xl md:text-4xl font-black mb-3">
-              Not a course. Not a PDF.<br />
-              <span className="text-emerald-400">A living roadmap.</span>
+              Everything you need.<br />
+              <span className="text-emerald-400">Nothing you don&apos;t.</span>
             </h2>
-            <p className="text-slate-400">Built for your situation. Updated from your real progress.</p>
+            <p className="text-slate-400">No fluff. No upsells. Just a clear plan and a coach to help you execute it.</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-5 scroll-reveal-stagger">
@@ -507,17 +510,20 @@ export default function LandingClient() {
         <div className="absolute inset-0 bg-emerald-500/6 blur-3xl" />
         <div className="relative max-w-2xl mx-auto scroll-reveal">
           <h2 className="text-4xl md:text-5xl font-black mb-4">
-            Your roadmap is<br />
-            <span className="text-emerald-400">2 minutes away.</span>
+            Stop waiting.<br />
+            <span className="text-emerald-400">Start with a real plan.</span>
           </h2>
-          <p className="text-slate-400 text-lg mb-8">
-            Find out exactly what to focus on and how to start — for free.
+          <p className="text-slate-400 text-lg mb-2">
+            Answer 8 questions and get a personalized week-by-week roadmap to your first income online — free, in 2 minutes.
+          </p>
+          <p className="text-slate-500 text-sm mb-8">
+            Your first week&apos;s tasks will be waiting for you the moment you sign up.
           </p>
           <Link
             href="/signup"
             className="inline-block bg-emerald-500 hover:bg-emerald-400 text-white font-black px-10 py-5 rounded-2xl text-lg transition-all shadow-2xl shadow-emerald-500/30"
           >
-            Find My Path Now →
+            Get My Free Roadmap →
           </Link>
           <p className="text-slate-600 text-sm mt-4">No credit card. No spam. Takes 2 minutes.</p>
         </div>
