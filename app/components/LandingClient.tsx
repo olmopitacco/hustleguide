@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
+import { IconTarget, IconCalendar, IconRefresh, IconChat, IconTrendUp, IconClock, IconMap, IconBrain, IconX } from './Icons'
 
 // ─── Scroll reveal hook ───────────────────────────────────────────────────────
 
@@ -152,7 +153,7 @@ function GuideMockup() {
 
             {/* Chat bubble */}
             <div className="bg-emerald-600 text-white text-xs px-3 py-2 rounded-xl rounded-bl-sm inline-block">
-              Your pitch response rate is 22% — above average. Keep going! 🔥
+              Your pitch response rate is 22% — above average. Keep going.
             </div>
           </div>
         </div>
@@ -214,22 +215,22 @@ export default function LandingClient() {
 
   const FEATURES = [
     {
-      icon: '🎯',
+      icon: <IconTarget className="w-6 h-6" />,
       title: 'Matched to you',
       desc: '40+ paths scored against your exact skills, hours, budget, and goals. No guessing.',
     },
     {
-      icon: '📅',
+      icon: <IconCalendar className="w-6 h-6" />,
       title: 'Week by week',
       desc: 'Specific daily tasks, scripts, and tools. Not "build an audience" type advice.',
     },
     {
-      icon: '🔄',
+      icon: <IconRefresh className="w-6 h-6" />,
       title: 'Adapts as you go',
       desc: 'Every new week is generated from your real progress. It grows as you do.',
     },
     {
-      icon: '💬',
+      icon: <IconChat className="w-6 h-6" />,
       title: 'AI coach included',
       desc: 'Ask anything, anytime. Your coach knows your path, your week, and where you are.',
     },
@@ -350,12 +351,12 @@ export default function LandingClient() {
 
           <div className="grid md:grid-cols-3 gap-6 scroll-reveal-stagger">
             {[
-              { icon: '😤', title: 'Generic advice that ignores your situation', desc: 'Every guide assumes you have 40 hours a week, €5,000 to invest, and live in the US.' },
-              { icon: '🗺️', title: 'No clear starting point or step-by-step plan', desc: '"Build an audience" is not a plan. You need specific tasks for specific days.' },
-              { icon: '⏳', title: 'Wasted months on the wrong thing', desc: 'Most people try 3 different paths before finding one that actually fits their life.' },
+              { icon: <IconX className="w-6 h-6" />, title: 'Generic advice that ignores your situation', desc: 'Every guide assumes you have 40 hours a week, €5,000 to invest, and live in the US.' },
+              { icon: <IconMap className="w-6 h-6" />, title: 'No clear starting point or step-by-step plan', desc: '"Build an audience" is not a plan. You need specific tasks for specific days.' },
+              { icon: <IconClock className="w-6 h-6" />, title: 'Wasted months on the wrong thing', desc: 'Most people try 3 different paths before finding one that actually fits their life.' },
             ].map(p => (
               <div key={p.title} className="bg-red-950/20 border border-red-900/30 rounded-2xl p-6 text-left">
-                <div className="text-3xl mb-3">{p.icon}</div>
+                <div className="text-red-400/70 mb-3">{p.icon}</div>
                 <h3 className="text-white font-bold text-sm mb-2">{p.title}</h3>
                 <p className="text-slate-500 text-xs leading-relaxed">{p.desc}</p>
               </div>
@@ -375,24 +376,24 @@ export default function LandingClient() {
           <div className="grid md:grid-cols-3 gap-6 scroll-reveal-stagger">
             {[
               {
-                n: '01', icon: '🧠',
+                n: '01', icon: <IconBrain className="w-6 h-6" />,
                 title: 'Answer 8 honest questions',
                 desc: 'Tell us your available time, budget, skills, and income goal. No fluff, just what we need to match you accurately.',
               },
               {
-                n: '02', icon: '🎯',
+                n: '02', icon: <IconTarget className="w-6 h-6" />,
                 title: 'Get matched to your best paths',
                 desc: 'We score 40+ hustle paths against your exact profile and show you the top 3 with realistic income estimates.',
               },
               {
-                n: '03', icon: '📈',
+                n: '03', icon: <IconTrendUp className="w-6 h-6" />,
                 title: 'Follow a guide that grows with you',
                 desc: 'Each week\'s plan is generated based on your check-in from the previous week. It adapts to your real progress.',
               },
             ].map(s => (
               <div key={s.n} className="relative bg-[#0d1421] border border-white/8 rounded-2xl p-6">
                 <div className="text-emerald-400 font-black text-4xl font-mono mb-4 opacity-30 absolute top-5 right-5">{s.n}</div>
-                <div className="text-3xl mb-3">{s.icon}</div>
+                <div className="text-emerald-400 mb-3">{s.icon}</div>
                 <h3 className="text-white font-bold text-base mb-2">{s.title}</h3>
                 <p className="text-slate-400 text-sm leading-relaxed">{s.desc}</p>
               </div>
@@ -415,7 +416,7 @@ export default function LandingClient() {
           <div className="grid md:grid-cols-2 gap-5 scroll-reveal-stagger">
             {FEATURES.map(f => (
               <div key={f.title} className="flex gap-4 bg-white/3 border border-white/8 rounded-2xl p-6 hover:border-emerald-500/30 hover:bg-emerald-500/5 transition-all">
-                <div className="text-3xl shrink-0">{f.icon}</div>
+                <div className="text-emerald-400 shrink-0 mt-0.5">{f.icon}</div>
                 <div>
                   <h3 className="text-white font-bold mb-1">{f.title}</h3>
                   <p className="text-slate-400 text-sm leading-relaxed">{f.desc}</p>

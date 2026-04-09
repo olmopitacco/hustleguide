@@ -179,7 +179,11 @@ export default function OnboardingPage() {
           <div className="relative w-20 h-20 mx-auto mb-8">
             <div className="absolute inset-0 rounded-full border-4 border-emerald-500/20"></div>
             <div className="absolute inset-0 rounded-full border-4 border-t-emerald-400 animate-spin"></div>
-            <div className="absolute inset-0 flex items-center justify-center text-2xl">🤖</div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <svg className="w-8 h-8 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/>
+              </svg>
+            </div>
           </div>
           <h2 className="text-3xl font-black text-white mb-3">Analyzing your profile...</h2>
           <p className="text-slate-400">Finding the perfect hustle path for you</p>

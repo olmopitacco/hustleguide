@@ -39,10 +39,10 @@ type Props = {
 }
 
 const NAV_ITEMS = [
-  { label: 'My Guide', icon: '🗺️', href: null, section: 'guide' },
-  { label: 'My Matches', icon: '🎯', href: null, section: 'matches' },
-  { label: 'Progress', icon: '📈', href: null, section: 'progress' },
-  { label: 'Settings', icon: '⚙️', href: null, section: 'settings' },
+  { label: 'My Guide', icon: '▣', href: null, section: 'guide' },
+  { label: 'My Matches', icon: '◎', href: null, section: 'matches' },
+  { label: 'Progress', icon: '↗', href: null, section: 'progress' },
+  { label: 'Settings', icon: '◌', href: null, section: 'settings' },
 ]
 
 const MOTIVATIONAL = [
@@ -54,10 +54,10 @@ const MOTIVATIONAL = [
 ]
 
 function activityIcon(type: string) {
-  if (type === 'guide_started') return '🚀'
-  if (type === 'week_completed') return '✅'
-  if (type === 'checkin_submitted') return '📝'
-  return '⭐'
+  if (type === 'guide_started') return '→'
+  if (type === 'week_completed') return '✓'
+  if (type === 'checkin_submitted') return '↺'
+  return '★'
 }
 
 function activityLabel(activity: Activity) {
@@ -247,10 +247,10 @@ export default function DashboardClient({
             {/* Stats row */}
             <div className="grid grid-cols-4 gap-3">
               {[
-                { label: 'Guides', value: `${guides.length}/${guideLimit}`, icon: '📋', sub: isPro ? 'Pro limit' : 'Free limit' },
-                { label: 'Weeks Done', value: totalWeeksCompleted, icon: '✅', sub: 'check-ins submitted' },
-                { label: 'Check-Ins', value: totalCheckIns, icon: '📝', sub: 'total reflections' },
-                { label: 'Completion', value: guides.length > 0 ? `${Math.round((totalWeeksCompleted / (guides.length * 12)) * 100)}%` : '—', icon: '🎯', sub: 'towards 12 weeks' },
+                { label: 'Guides', value: `${guides.length}/${guideLimit}`, icon: '▣', sub: isPro ? 'Pro limit' : 'Free limit' },
+                { label: 'Weeks Done', value: totalWeeksCompleted, icon: '✓', sub: 'check-ins submitted' },
+                { label: 'Check-Ins', value: totalCheckIns, icon: '↺', sub: 'total reflections' },
+                { label: 'Completion', value: guides.length > 0 ? `${Math.round((totalWeeksCompleted / (guides.length * 12)) * 100)}%` : '—', icon: '◎', sub: 'towards 12 weeks' },
               ].map(s => (
                 <div key={s.label} className="bg-white/5 border border-white/10 rounded-xl p-4 text-center">
                   <div className="text-xl mb-1">{s.icon}</div>
@@ -314,16 +314,16 @@ export default function DashboardClient({
                   </Link>
                   <button
                     onClick={() => setConfirmDeleteId(activeGuide.id)}
-                    className="text-slate-600 hover:text-red-400 text-sm transition-colors"
+                    className="text-slate-600 hover:text-red-400 transition-colors"
                     title="Delete guide"
                   >
-                    🗑️
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
                   </button>
                 </div>
               </div>
             ) : (
               <div className="bg-white/5 border border-white/10 rounded-2xl p-8 text-center">
-                <div className="text-4xl mb-3">🚀</div>
+                <div className="flex justify-center mb-3"><svg className="w-10 h-10 text-emerald-400/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
                 <h2 className="text-xl font-bold text-white mb-2">No guide yet</h2>
                 <p className="text-slate-400 text-sm mb-5">
                   Take the questionnaire to get your personalized hustle roadmap.
@@ -355,7 +355,7 @@ export default function DashboardClient({
                       onClick={() => setShowMassConfirm(true)}
                       className="flex items-center gap-1.5 text-xs bg-red-500/15 hover:bg-red-500/25 border border-red-500/30 text-red-400 font-semibold px-3 py-1.5 rounded-lg transition-colors"
                     >
-                      🗑️ Delete {selected.size} selected
+                      ✕ Delete {selected.size} selected
                     </button>
                   )}
                 </div>
@@ -496,10 +496,10 @@ export default function DashboardClient({
 
             <div className="grid grid-cols-2 gap-4">
               {[
-                { label: 'Total Guides', value: guides.length, icon: '📋', color: 'emerald' },
-                { label: 'Weeks Completed', value: totalWeeksCompleted, icon: '✅', color: 'green' },
-                { label: 'Check-Ins Submitted', value: totalCheckIns, icon: '📝', color: 'blue' },
-                { label: 'Weeks Remaining', value: Math.max(0, guides.length * 12 - totalWeeksCompleted), icon: '🎯', color: 'teal' },
+                { label: 'Total Guides', value: guides.length, icon: '▣', color: 'emerald' },
+                { label: 'Weeks Completed', value: totalWeeksCompleted, icon: '✓', color: 'green' },
+                { label: 'Check-Ins Submitted', value: totalCheckIns, icon: '↺', color: 'blue' },
+                { label: 'Weeks Remaining', value: Math.max(0, guides.length * 12 - totalWeeksCompleted), icon: '◎', color: 'teal' },
               ].map(s => (
                 <div key={s.label} className="bg-white/5 border border-white/10 rounded-xl p-5">
                   <div className="flex items-start justify-between mb-3">
@@ -615,7 +615,7 @@ export default function DashboardClient({
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
             <div className="bg-slate-900 border border-red-900/50 rounded-2xl w-full max-w-sm p-6 shadow-2xl pointer-events-auto">
               <div className="text-center mb-5">
-                <div className="w-12 h-12 rounded-full bg-red-950/60 border border-red-900/60 flex items-center justify-center text-2xl mx-auto mb-3">🗑️</div>
+                <div className="w-12 h-12 rounded-full bg-red-950/60 border border-red-900/60 flex items-center justify-center mx-auto mb-3"><svg className="w-5 h-5 text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></div>
                 <h3 className="text-lg font-bold text-white mb-2">Delete {selected.size} guide{selected.size !== 1 ? 's' : ''}?</h3>
                 <p className="text-slate-400 text-sm leading-relaxed">
                   All progress, check-ins, and plans for the selected guides will be permanently lost.
@@ -655,7 +655,7 @@ export default function DashboardClient({
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
               <div className="bg-slate-900 border border-red-900/50 rounded-2xl w-full max-w-sm p-6 shadow-2xl pointer-events-auto">
                 <div className="text-center mb-5">
-                  <div className="w-12 h-12 rounded-full bg-red-950/60 border border-red-900/60 flex items-center justify-center text-2xl mx-auto mb-3">🗑️</div>
+                  <div className="w-12 h-12 rounded-full bg-red-950/60 border border-red-900/60 flex items-center justify-center mx-auto mb-3"><svg className="w-5 h-5 text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></div>
                   <h3 className="text-lg font-bold text-white mb-2">Delete this guide?</h3>
                   <p className="text-slate-400 text-sm leading-relaxed">
                     <span className="text-white font-semibold">{g.path_name}</span> — Week {g.weeks_unlocked} of 12.

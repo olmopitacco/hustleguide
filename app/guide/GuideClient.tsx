@@ -311,7 +311,7 @@ function DeleteConfirmModal({
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
         <div className="bg-gray-900 border border-red-900/50 rounded-2xl w-full max-w-sm p-6 shadow-2xl pointer-events-auto">
           <div className="text-center mb-5">
-            <div className="w-12 h-12 rounded-full bg-red-950/60 border border-red-900/60 flex items-center justify-center text-2xl mx-auto mb-3">🗑️</div>
+            <div className="w-12 h-12 rounded-full bg-red-950/60 border border-red-900/60 flex items-center justify-center mx-auto mb-3"><svg className="w-5 h-5 text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></div>
             <h3 className="text-lg font-bold text-white mb-2">Delete this guide?</h3>
             <p className="text-gray-400 text-sm leading-relaxed">
               You&apos;re about to delete your <span className="text-white font-semibold">{pathName}</span> guide.
@@ -709,7 +709,7 @@ export default function GuideClient({
     'Stuck on something? Ask your coach 💬',
     'Need help with a task? I\'m here 👋',
     'Not sure where to start? Ask me anything →',
-    'Your coach is online — fire away 🔥',
+    'Your coach is online — ask anything',
     'Questions about this week? Let\'s talk 💡',
   ]
   useEffect(() => {
@@ -875,7 +875,7 @@ export default function GuideClient({
                   'text-gray-700 cursor-not-allowed'
                 }`}>
                 <span className="shrink-0 w-4 text-center text-xs">
-                  {allCriteriaDone ? '✓' : planLocked ? '⭐' : !canAccess ? '🔒' : n}
+                  {allCriteriaDone ? '✓' : planLocked ? '★' : !canAccess ? '·' : n}
                 </span>
                 <span className="truncate flex-1">{week ? week.theme : `Week ${n}`}</span>
                 {planLocked && <span className="text-xs text-emerald-500 shrink-0">Pro</span>}
@@ -891,14 +891,14 @@ export default function GuideClient({
               onClick={() => setShowUpgrade(true)}
               className="w-full text-xs bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 px-3 py-2 rounded-lg transition-colors font-medium"
             >
-              ⭐ Unlock all weeks
+              ↑ Unlock all weeks
             </button>
           )}
           <button
             onClick={() => setShowDelete(true)}
             className="w-full text-xs text-gray-600 hover:text-red-400 hover:bg-red-950/20 px-3 py-2 rounded-lg transition-colors text-left"
           >
-            🗑️ Delete this guide
+            Delete this guide
           </button>
         </div>
       </aside>
@@ -929,7 +929,7 @@ export default function GuideClient({
             <div className="text-center py-24">
               {isPlanLocked(activeWeek) ? (
                 <div>
-                  <div className="text-5xl mb-4">⭐</div>
+                  <div className="flex justify-center mb-4"><svg className="w-10 h-10 text-emerald-400/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
                   <p className="text-white font-semibold mb-2">Week {activeWeek} is a Pro feature</p>
                   <p className="text-gray-500 text-sm mb-5">Free plan includes weeks 1–{FREE_WEEK_LIMIT}. Upgrade to unlock all 12 weeks.</p>
                   <button
@@ -941,7 +941,7 @@ export default function GuideClient({
                 </div>
               ) : (
                 <div>
-                  <div className="text-5xl mb-4">🔒</div>
+                  <div className="flex justify-center mb-4"><svg className="w-10 h-10 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
                   <p className="text-gray-500 text-sm">Complete Week {activeWeek - 1} and submit your check-in to unlock this week.</p>
                 </div>
               )}
