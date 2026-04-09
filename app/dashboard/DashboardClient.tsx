@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import UpgradeModal from '@/app/components/UpgradeModal'
+import { createClient } from '@/lib/supabase/client'
 
 type Guide = {
   id: string
@@ -98,6 +99,11 @@ export default function DashboardClient({
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [massDeleting, setMassDeleting] = useState(false)
   const [showMassConfirm, setShowMassConfirm] = useState(false)
+  const [showRetakeConfirm, setShowRetakeConfirm] = useState(false)
+  const [retaking, setRetaking] = useState(false)
+  const [showDeleteAccount, setShowDeleteAccount] = useState(false)
+  const [deleteConfirmText, setDeleteConfirmText] = useState('')
+  const [deletingAccount, setDeletingAccount] = useState(false)
 
   function toggleSelect(id: string) {
     setSelected(prev => {
@@ -126,6 +132,25 @@ export default function DashboardClient({
     setMassDeleting(false)
     router.refresh()
   }
+  async function handleRetakeQuiz() {
+    setRetaking(true)
+    try {
+      await fetch('/api/quiz/retake', { method: 'POST' })
+    } catch { /* ignore */ }
+    router.push('/onboarding')
+  }
+
+  async function handleDeleteAccount() {
+    if (deleteConfirmText !== 'DELETE') return
+    setDeletingAccount(true)
+    try {
+      await fetch('/api/account/delete', { method: 'POST' })
+      const supabase = createClient()
+      await supabase.auth.signOut()
+    } catch { /* ignore */ }
+    router.push('/')
+  }
+
   const isPro = subscriptionStatus === 'pro'
   const FREE_GUIDE_LIMIT = 1
   const PRO_GUIDE_LIMIT = 3
@@ -177,9 +202,9 @@ export default function DashboardClient({
   }
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br [#070d1a]">
-      {/* Sidebar */}
-      <aside className="w-60 shrink-0 border-r border-white/10 flex flex-col py-8 px-4">
+    <div className="flex min-h-screen bg-[#070d1a]">
+      {/* Sidebar — hidden on mobile, visible on md+ */}
+      <aside className="hidden md:flex w-60 shrink-0 border-r border-white/10 flex-col py-8 px-4">
         <Link href="/" className="text-xl font-black text-white tracking-tight px-2 mb-10">
           Hustle<span className="text-emerald-400">Guide</span>
         </Link>
@@ -227,7 +252,7 @@ export default function DashboardClient({
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 px-8 py-8 overflow-y-auto">
+      <main className="flex-1 px-4 md:px-8 py-6 md:py-8 overflow-y-auto pb-24 md:pb-8">
         {/* Upgrade success banner */}
         {upgradedParam && (
           <div className="bg-green-500/20 border border-green-500/30 text-green-300 rounded-xl px-5 py-3 mb-6 flex items-center gap-3">
@@ -245,7 +270,7 @@ export default function DashboardClient({
             </div>
 
             {/* Stats row */}
-            <div className="grid grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {[
                 { label: 'Guides', value: `${guides.length}/${guideLimit}`, icon: '▣', sub: isPro ? 'Pro limit' : 'Free limit' },
                 { label: 'Weeks Done', value: totalWeeksCompleted, icon: '✓', sub: 'check-ins submitted' },
@@ -588,6 +613,40 @@ export default function DashboardClient({
               )}
             </div>
 
+            {/* Your Path Matching */}
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+              <h3 className="text-white font-bold mb-4">Your Path Matching</h3>
+              {otherPaths.length > 0 ? (
+                <div className="space-y-3 mb-5">
+                  {otherPaths.slice(0, 3).map(p => (
+                    <div key={p.name} className="flex items-center gap-3">
+                      <span className="text-lg w-7 text-center shrink-0">{p.emoji}</span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-slate-200 text-sm font-medium truncate">{p.name}</span>
+                          <span className="text-emerald-400 text-xs font-bold ml-2 shrink-0">{p.matchPercent}%</span>
+                        </div>
+                        <div className="h-1 bg-white/10 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full"
+                            style={{ width: `${p.matchPercent}%` }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-slate-500 text-sm mb-5">No matches yet — take the quiz to see your path matches.</p>
+              )}
+              <button
+                onClick={() => setShowRetakeConfirm(true)}
+                className="text-sm font-semibold text-emerald-400 hover:text-emerald-300 border border-emerald-500/30 hover:border-emerald-500/60 px-4 py-2 rounded-xl transition-all"
+              >
+                Retake Quiz
+              </button>
+            </div>
+
             {/* Account */}
             <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
               <h3 className="text-white font-bold mb-4">Account</h3>
@@ -597,15 +656,131 @@ export default function DashboardClient({
                 </button>
               </form>
             </div>
+
+            {/* Delete Account */}
+            <div className="bg-red-950/20 border border-red-900/30 rounded-2xl p-6">
+              <h3 className="text-white font-bold mb-2">Danger Zone</h3>
+              <p className="text-slate-500 text-sm mb-4">Permanently delete your account and all data.</p>
+              <button
+                onClick={() => { setShowDeleteAccount(true); setDeleteConfirmText('') }}
+                className="text-red-400 hover:text-red-300 border border-red-700/40 hover:border-red-600/60 text-sm font-semibold px-4 py-2 rounded-xl transition-all"
+              >
+                Delete my account
+              </button>
+            </div>
+
+            {/* Legal links */}
+            <div className="flex gap-4 pt-2">
+              <Link href="/privacy" className="text-slate-600 hover:text-slate-400 text-xs transition-colors">Privacy Policy</Link>
+              <Link href="/terms" className="text-slate-600 hover:text-slate-400 text-xs transition-colors">Terms of Service</Link>
+            </div>
           </div>
         )}
       </main>
+
+      {/* Mobile bottom tab bar */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#070d1a] border-t border-white/10 flex">
+        {NAV_ITEMS.map(item => (
+          <button
+            key={item.section}
+            onClick={() => setSection(item.section)}
+            className={`flex-1 flex flex-col items-center gap-1 py-3 text-xs font-medium transition-colors ${
+              section === item.section ? 'text-emerald-400' : 'text-slate-500'
+            }`}
+          >
+            <span className="text-base leading-none">{item.icon}</span>
+            <span>{item.label}</span>
+          </button>
+        ))}
+      </nav>
 
       {showUpgrade && (
         <UpgradeModal
           onClose={() => setShowUpgrade(false)}
           trigger={!isPro ? 'Free plan is limited to 1 guide. Pro allows up to 3.' : undefined}
         />
+      )}
+
+      {/* Retake Quiz Modal */}
+      {showRetakeConfirm && (
+        <>
+          <div className="fixed inset-0 bg-black/70 z-50" onClick={() => setShowRetakeConfirm(false)} />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
+            <div className="bg-slate-900 border border-white/10 rounded-2xl w-full max-w-sm p-6 shadow-2xl pointer-events-auto">
+              <div className="text-center mb-5">
+                <div className="w-12 h-12 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center mx-auto mb-3">
+                  <svg className="w-5 h-5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">Retake the quiz?</h3>
+                <p className="text-slate-400 text-sm leading-relaxed">
+                  Retaking will generate fresh path matches. Your existing guides and all progress will be kept exactly as they are.
+                </p>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowRetakeConfirm(false)}
+                  disabled={retaking}
+                  className="flex-1 py-2.5 rounded-xl border border-slate-700 text-slate-400 hover:text-white hover:border-slate-500 transition-colors text-sm font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleRetakeQuiz}
+                  disabled={retaking}
+                  className="flex-1 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-white font-semibold transition-colors text-sm"
+                >
+                  {retaking ? 'Loading...' : 'Yes, retake'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Delete Account Modal */}
+      {showDeleteAccount && (
+        <>
+          <div className="fixed inset-0 bg-black/70 z-50" onClick={() => setShowDeleteAccount(false)} />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
+            <div className="bg-slate-900 border border-red-900/50 rounded-2xl w-full max-w-sm p-6 shadow-2xl pointer-events-auto">
+              <div className="text-center mb-5">
+                <div className="w-12 h-12 rounded-full bg-red-950/60 border border-red-900/60 flex items-center justify-center mx-auto mb-3">
+                  <svg className="w-5 h-5 text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">Delete your account?</h3>
+                <p className="text-slate-400 text-sm leading-relaxed">
+                  This permanently deletes your account, all guides, check-ins, and progress. This cannot be undone.
+                </p>
+              </div>
+              <div className="mb-4">
+                <label className="text-xs text-slate-500 block mb-1.5">Type <span className="text-white font-mono font-bold">DELETE</span> to confirm</label>
+                <input
+                  type="text"
+                  value={deleteConfirmText}
+                  onChange={e => setDeleteConfirmText(e.target.value)}
+                  placeholder="DELETE"
+                  className="w-full bg-white/5 border border-white/10 focus:border-red-500 rounded-xl px-4 py-2.5 text-white text-sm placeholder-slate-600 outline-none transition-colors"
+                />
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowDeleteAccount(false)}
+                  disabled={deletingAccount}
+                  className="flex-1 py-2.5 rounded-xl border border-slate-700 text-slate-400 hover:text-white hover:border-slate-500 transition-colors text-sm font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDeleteAccount}
+                  disabled={deleteConfirmText !== 'DELETE' || deletingAccount}
+                  className="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold transition-colors text-sm"
+                >
+                  {deletingAccount ? 'Deleting...' : 'Delete everything'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
       )}
 
       {/* Mass delete confirmation modal */}

@@ -261,7 +261,7 @@ export default function OnboardingPage() {
                   <button
                     key={opt}
                     onClick={() => handleSingle(q.id, opt)}
-                    className={`text-left px-5 py-4 rounded-xl border font-semibold text-sm transition-all duration-150
+                    className={`text-left px-5 py-4 min-h-[52px] rounded-xl border font-semibold text-sm transition-all duration-150
                       ${selected
                         ? 'bg-emerald-500 border-emerald-400 text-white shadow-lg shadow-emerald-500/25'
                         : 'bg-white/5 border-white/10 text-slate-200 hover:bg-white/10 hover:border-white/20'
@@ -283,7 +283,7 @@ export default function OnboardingPage() {
                   <button
                     key={opt}
                     onClick={() => handleMultiToggle(q.id, opt)}
-                    className={`text-left px-4 py-3.5 rounded-xl border font-semibold text-sm transition-all duration-150 flex items-center gap-2
+                    className={`text-left px-4 py-3.5 min-h-[52px] rounded-xl border font-semibold text-sm transition-all duration-150 flex items-center gap-2
                       ${selected
                         ? 'bg-emerald-500 border-emerald-400 text-white shadow-lg shadow-emerald-500/25'
                         : 'bg-white/5 border-white/10 text-slate-200 hover:bg-white/10 hover:border-white/20'
@@ -325,17 +325,17 @@ export default function OnboardingPage() {
       {/* Bottom nav — hidden for single choice (auto-advances), shown for multi/text */}
       <div className="px-6 pb-8 max-w-2xl mx-auto w-full">
         <div className="flex items-center gap-3">
-          {/* Back button */}
+          {/* Back button — icon only on small screens */}
           {current > 0 && (
             <button
               onClick={() => navigate('back')}
               disabled={animating}
-              className="flex items-center gap-2 text-slate-400 hover:text-white font-semibold text-sm transition-colors px-4 py-3"
+              className="flex items-center gap-2 text-slate-400 hover:text-white font-semibold text-sm transition-colors px-3 sm:px-4 py-3"
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 16 16">
+              <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 16 16">
                 <path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
-              Back
+              <span className="hidden sm:inline">Back</span>
             </button>
           )}
 
@@ -344,7 +344,7 @@ export default function OnboardingPage() {
             <button
               onClick={handleNext}
               disabled={!canAdvance() || animating}
-              className={`ml-auto flex items-center gap-2 font-bold text-sm px-6 py-3 rounded-xl transition-all
+              className={`flex-1 sm:flex-none ml-auto flex items-center justify-center gap-2 font-bold text-sm px-6 py-3 rounded-xl transition-all
                 ${canAdvance()
                   ? 'bg-emerald-500 text-white hover:bg-emerald-400 shadow-lg shadow-emerald-500/25'
                   : 'bg-white/5 text-slate-500 cursor-not-allowed'
@@ -361,7 +361,7 @@ export default function OnboardingPage() {
           {q.type === 'single' && current === QUESTIONS.length - 1 && answers[q.id] && (
             <button
               onClick={handleNext}
-              className="ml-auto flex items-center gap-2 font-bold text-sm px-6 py-3 rounded-xl bg-emerald-500 text-white hover:bg-emerald-400 shadow-lg shadow-emerald-500/25 transition-all"
+              className="flex-1 sm:flex-none ml-auto flex items-center justify-center gap-2 font-bold text-sm px-6 py-3 rounded-xl bg-emerald-500 text-white hover:bg-emerald-400 shadow-lg shadow-emerald-500/25 transition-all"
             >
               See My Results
               <svg className="w-4 h-4" fill="none" viewBox="0 0 16 16">

@@ -119,7 +119,7 @@ function TaskDrawer({ task, onClose }: { task: DetailedTask; onClose: () => void
   return (
     <>
       <div className="fixed inset-0 bg-black/60 z-40" onClick={onClose} />
-      <div className="fixed right-0 top-0 h-full w-full max-w-md bg-gray-900 z-50 flex flex-col shadow-2xl">
+      <div className="fixed right-0 top-0 h-full w-full md:max-w-md bg-gray-900 z-50 flex flex-col shadow-2xl">
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-800 sticky top-0 bg-gray-900">
           <h3 className="font-bold text-white text-base leading-tight pr-4">{task.task_name}</h3>
           <button onClick={onClose} className="text-gray-500 hover:text-white text-2xl leading-none shrink-0">&times;</button>
@@ -223,8 +223,8 @@ function CheckinModal({
   return (
     <>
       <div className="fixed inset-0 bg-black/70 z-40" onClick={onClose} />
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
+      <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4">
+        <div className="bg-gray-900 border border-gray-800 sm:rounded-2xl w-full sm:max-w-lg shadow-2xl h-full sm:h-auto max-h-full sm:max-h-[90vh] overflow-y-auto">
           {submitting ? (
             <div className="p-10 flex flex-col items-center gap-4 text-center">
               <svg className="w-8 h-8 text-emerald-400 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -381,7 +381,7 @@ function ChatPanel({
   }
 
   return (
-    <div className="fixed bottom-20 right-4 w-80 sm:w-96 bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl z-30 flex flex-col" style={{ maxHeight: '28rem' }}>
+    <div className="fixed inset-0 md:inset-auto md:bottom-20 md:right-4 md:w-96 bg-gray-900 border border-gray-700 md:rounded-2xl shadow-2xl z-30 flex flex-col" style={{ maxHeight: '100dvh' }}>
       <div className="flex items-center justify-between px-4 py-3 border-b border-gray-800">
         <div>
           <p className="font-semibold text-white text-sm">Ask your coach</p>
@@ -844,8 +844,8 @@ export default function GuideClient({
 
   return (
     <div className="min-h-screen bg-gray-950 flex">
-      {/* Sidebar */}
-      <aside className="w-56 shrink-0 bg-gray-900 border-r border-gray-800 flex flex-col h-screen sticky top-0 overflow-y-auto">
+      {/* Sidebar — hidden on mobile */}
+      <aside className="hidden md:flex w-56 shrink-0 bg-gray-900 border-r border-gray-800 flex-col h-screen sticky top-0 overflow-y-auto">
         <div className="p-4 border-b border-gray-800">
           <Link href="/dashboard" className="text-xs text-gray-600 hover:text-gray-300 flex items-center gap-1 mb-3">← Dashboard</Link>
           <p className="text-xs font-bold text-emerald-400 uppercase tracking-wide truncate">{pathName}</p>
@@ -932,9 +932,50 @@ export default function GuideClient({
         </div>
       </aside>
 
+      {/* Mobile week selector bar — shown only on mobile */}
+      <div className="md:hidden fixed top-0 left-0 right-0 z-20 bg-gray-900 border-b border-gray-800">
+        <div className="flex items-center px-3 py-2 gap-2">
+          <Link href="/dashboard" className="text-gray-500 hover:text-gray-300 shrink-0 p-1">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 16 16"><path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </Link>
+          <p className="text-xs font-bold text-emerald-400 truncate flex-1">{pathName}</p>
+        </div>
+        <div className="flex overflow-x-auto gap-1.5 px-3 pb-2 scrollbar-hide">
+          {allWeekNums.map(n => {
+            const exists = guide.weeks.some(w => w.week_number === n)
+            const unlocked = isUnlocked(n)
+            const planLocked = isPlanLocked(n)
+            const week = guide.weeks.find(w => w.week_number === n)
+            const allCriteriaDone = week
+              ? (checkedCriteria[n]?.size ?? 0) >= week.completion_criteria.length && week.completion_criteria.length > 0
+              : false
+            const canAccess = exists && unlocked && !planLocked
+
+            return (
+              <button
+                key={n}
+                onClick={() => {
+                  if (planLocked) { setShowUpgrade(true); return }
+                  if (canAccess) setActiveWeek(n)
+                }}
+                className={`shrink-0 flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-colors whitespace-nowrap ${
+                  n === activeWeek ? 'bg-emerald-600 text-white' :
+                  canAccess ? 'bg-gray-800 text-gray-300' :
+                  planLocked ? 'bg-gray-800/50 text-gray-600' :
+                  'bg-gray-800/30 text-gray-700'
+                }`}
+              >
+                W{n}
+                {allCriteriaDone ? <span className="text-emerald-400">✓</span> : planLocked ? <span className="text-emerald-500 text-xs">★</span> : null}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
       {/* Main */}
-      <main className="flex-1 overflow-y-auto">
-        <div className="sticky top-0 bg-gray-950/90 backdrop-blur border-b border-gray-800 px-6 py-3 z-10 flex items-center justify-between">
+      <main className="flex-1 overflow-y-auto pt-[6.5rem] md:pt-0">
+        <div className="sticky top-0 hidden md:flex bg-gray-950/90 backdrop-blur border-b border-gray-800 px-6 py-3 z-10 items-center justify-between">
           <span className="text-xs text-gray-500">
             {guide.weeks.length} week{guide.weeks.length !== 1 ? 's' : ''} generated
             {!isPro && <span className="ml-2 text-emerald-500">· Free plan: weeks 1–{FREE_WEEK_LIMIT}</span>}

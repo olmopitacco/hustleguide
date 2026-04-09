@@ -227,7 +227,7 @@ export default function ResultsClient({ top3, rest, userId, userName, subscripti
                 </p>
 
                 {/* Income + CTA */}
-                <div className="flex items-center justify-between flex-wrap gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                   <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5">
                     <div className="text-xs text-slate-500 uppercase tracking-wide font-medium mb-0.5">
                       Realistic income
@@ -238,7 +238,7 @@ export default function ResultsClient({ top3, rest, userId, userName, subscripti
                   <button
                     onClick={() => handleGenerate(path.name)}
                     disabled={loading !== null}
-                    className={`flex items-center gap-2 font-bold px-6 py-3 rounded-xl text-sm transition-all
+                    className={`w-full sm:w-auto flex items-center justify-center gap-2 font-bold px-6 py-3 rounded-xl text-sm transition-all
                       ${i === 0
                         ? 'bg-emerald-500 hover:bg-emerald-400 text-white shadow-lg shadow-emerald-500/25'
                         : 'bg-white/10 hover:bg-white/15 text-white border border-white/10'
