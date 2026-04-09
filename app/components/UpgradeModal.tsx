@@ -76,7 +76,7 @@ export default function UpgradeModal({ onClose, trigger }: Props) {
         <button
           onClick={handleUpgrade}
           disabled={loading}
-          className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-400 hover:to-pink-400 disabled:opacity-50 text-white font-bold py-3 rounded-xl transition-all"
+          className="w-full bg-gradient-to-r bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-white font-bold py-3 rounded-xl transition-all"
         >
           {loading ? 'Redirecting...' : 'Upgrade Now →'}
         </button>

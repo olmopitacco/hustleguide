@@ -578,62 +578,98 @@ function generateExplanation(path: HustlePath, profile: UserProfile): string {
   const userSkills = profile.skills ?? []
   const userHates = profile.hates ?? []
   const matchingSkills = path.relatedSkills.filter(s => userSkills.includes(s))
-  const badRequirements = path.requires.filter(r => userHates.includes(r))
+  const avoidedThings = path.requires.filter(r => userHates.includes(r))
+  const noConflicts = avoidedThings.length === 0
   const userHours = parseHoursMin(profile.hours_available)
-  const tl = parseTimeline(profile.income_timeline)
-  const parts: string[] = []
+  const fitsHours = path.minHoursPerWeek <= userHours
+  const zeroBudget = profile.budget?.startsWith('€0')
+  const lowBudget = zeroBudget || profile.budget?.startsWith('Under')
+  const fastNeeded = profile.income_timeline === 'Within 30 days' || profile.income_timeline === '1-3 months'
+  const isFast = path.firstIncome === 'fast'
+  const prefMatch = profile.preferences && path.workStyles.includes(profile.preferences)
+  const location = profile.location ?? ''
+  const hasLocation = location.length > 2
 
-  // Skills
-  if (matchingSkills.length > 0) {
-    parts.push(`your ${matchingSkills[0].toLowerCase()} background gives you a genuine head start`)
+  // Build a pool of true statements, pick 2 that are different from each other
+  const pool: string[] = []
+
+  // Skills angle
+  if (matchingSkills.length >= 2) {
+    pool.push(`you already have ${matchingSkills[0].toLowerCase()} and ${matchingSkills[1].toLowerCase()} skills, so you're not starting from zero`)
+  } else if (matchingSkills.length === 1) {
+    pool.push(`your ${matchingSkills[0].toLowerCase()} background is directly useful here — you won't be learning from scratch`)
   } else if (path.relatedSkills.length === 0) {
-    parts.push(`no specific skills or experience are required to get started`)
+    pool.push(`this path requires no pre-existing skills — everything is learnable in the first 2 weeks`)
+  } else {
+    pool.push(`the skills this path needs are learnable quickly — most people pick them up in their first few sessions`)
   }
 
-  // Timeline
-  if (path.firstIncome === 'fast' && tl === 'Within 30 days') {
-    parts.push(`it's one of the fastest paths to your first payment — realistic within 30 days`)
-  } else if (path.firstIncome === 'fast' && tl === '1-3 months') {
-    parts.push(`you can realistically be earning within your first 1–3 months`)
-  } else if (path.firstIncome === 'medium' && tl === '1-3 months') {
-    parts.push(`the timeline aligns well with your 1–3 month income goal`)
+  // Timeline angle
+  if (isFast && fastNeeded) {
+    pool.push(`it's one of the fastest-moving paths available — first payments are realistic within 30 days`)
+  } else if (isFast && !fastNeeded) {
+    pool.push(`it moves faster than most paths, so you'll likely hit income before your own deadline`)
+  } else if (path.firstIncome === 'medium' && fastNeeded) {
+    pool.push(`while not instant, this path is faster than most and can still hit your timeline with focused effort`)
+  } else {
+    pool.push(`the income curve is gradual but compounds — people who stick with it for 3+ months consistently see strong results`)
   }
 
-  // Budget
-  if (path.budgetLevel === 0 && profile.budget?.startsWith('€0')) {
-    parts.push(`it requires zero upfront investment, which matches your budget`)
-  } else if (path.budgetLevel === 0) {
-    parts.push(`it costs nothing to start — no investment needed`)
+  // Budget angle
+  if (path.budgetLevel === 0 && zeroBudget) {
+    pool.push(`it costs literally nothing to start — no tools, no subscriptions, no upfront investment`)
+  } else if (path.budgetLevel === 0 && !zeroBudget) {
+    pool.push(`you don't need to spend any of your budget to start — which gives you room to invest later once you're earning`)
+  } else if (path.budgetLevel === 1 && !zeroBudget) {
+    pool.push(`the startup costs are minimal — under €100 gets you everything you need`)
   }
 
-  // Hours
-  if (path.minHoursPerWeek <= userHours && parts.length < 2) {
-    parts.push(`fits comfortably within your ${profile.hours_available ?? 'available'} weekly schedule`)
+  // Hours angle
+  if (fitsHours && profile.hours_available) {
+    pool.push(`it fits cleanly into ${profile.hours_available} per week — you won't feel overwhelmed in week one`)
   }
 
-  // Avoidance
-  if (badRequirements.length === 0 && path.requires.length > 0 && parts.length < 2) {
-    parts.push(`and it avoids all the things you said you hate doing`)
+  // Work style angle
+  if (prefMatch && profile.preferences) {
+    const styleMap: Record<string, string> = {
+      'Creative work': 'it leans heavily on creative thinking, which matches how you said you prefer to work',
+      'Analytical work': 'it rewards analytical thinking — exactly the kind of work you said you prefer',
+      'Working with people': 'it involves regular client interaction, which suits your preference for working with people',
+      'Working alone': 'you can do this entirely independently — no team required, no calls if you don\'t want them',
+    }
+    pool.push(styleMap[profile.preferences] ?? `it suits your preference for ${profile.preferences.toLowerCase()}`)
   }
 
-  // Work style
-  if (profile.preferences && path.workStyles.includes(profile.preferences) && parts.length < 2) {
-    parts.push(`${profile.preferences.toLowerCase()} is a perfect match for your stated preference`)
+  // Conflict avoidance angle
+  if (noConflicts && path.requires.length > 0) {
+    pool.push(`it doesn't require any of the things you said you hate — you won't be forcing yourself to do work you dread`)
   }
 
-  // Fallback
-  if (parts.length === 0) {
-    parts.push(`aligns with your work style and availability`)
-    parts.push(`realistic income potential that matches your goal timeline`)
-  } else if (parts.length === 1) {
-    if (profile.preferences && path.workStyles.includes(profile.preferences)) {
-      parts.push(`it suits your preference for ${profile.preferences.toLowerCase()}`)
-    } else {
-      parts.push(`the earning potential aligns with your goal timeline`)
+  // Location angle (for paths that can benefit from local context)
+  if (hasLocation && (path.name.includes('Local') || path.name.includes('Tutoring') || path.name.includes('Coaching'))) {
+    pool.push(`being based in ${location} gives you a real local market to tap into before going remote`)
+  }
+
+  // "Tried before" angle
+  if (profile.tried_before && profile.tried_before.length > 5) {
+    if (profile.tried_before.toLowerCase().includes('dropshipping') || profile.tried_before.toLowerCase().includes('ecom')) {
+      if (!path.name.toLowerCase().includes('drop') && !path.name.toLowerCase().includes('ecom')) {
+        pool.push(`unlike what you've tried before, this path doesn't require managing inventory, suppliers, or ads`)
+      }
     }
   }
 
-  return `${cap(parts[0])}. ${cap(parts[1])}.`
+  // Fallback
+  if (pool.length === 0) {
+    pool.push(`the overall match with your profile — hours, budget, and goals — is strong`)
+    pool.push(`realistic income potential that fits your stated timeline`)
+  }
+
+  // Pick first 2 that are distinct enough
+  const first = pool[0]
+  const second = pool.find((p, i) => i > 0 && p.slice(0, 20) !== first.slice(0, 20)) ?? pool[1] ?? pool[0]
+
+  return `${cap(first)}. ${cap(second)}.`
 }
 
 // ─── Main scoring function ────────────────────────────────────────────────────

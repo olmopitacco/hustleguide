@@ -20,7 +20,7 @@ function MatchBar({ percent }: { percent: number }) {
     <div className="flex items-center gap-2">
       <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
         <div
-          className="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full transition-all duration-700"
+          className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full transition-all duration-700"
           style={{ width: `${percent}%` }}
         />
       </div>
@@ -79,7 +79,7 @@ export default function ResultsClient({ top3, rest, userId, userName, subscripti
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="min-h-screen bg-[#070d1a]">
       {showUpgrade && (
         <UpgradeModal
           onClose={() => setShowUpgrade(false)}
@@ -97,9 +97,13 @@ export default function ResultsClient({ top3, rest, userId, userName, subscripti
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
             <div className="bg-slate-900 border border-white/10 rounded-2xl w-full max-w-sm p-6 shadow-2xl pointer-events-auto">
               <div className="text-center mb-5">
-                <div className="text-4xl mb-3">🎯</div>
+                <div className="flex justify-center mb-3">
+                  <div className="w-10 h-10 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center">
+                    <svg className="w-5 h-5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                  </div>
+                </div>
                 <h3 className="text-lg font-bold text-white mb-2">
-                  Generate <span className="text-purple-400">{confirmPath}</span> guide?
+                  Generate <span className="text-emerald-400">{confirmPath}</span> guide?
                 </h3>
                 <p className="text-slate-400 text-sm leading-relaxed">{confirmMessage()}</p>
               </div>
@@ -112,7 +116,7 @@ export default function ResultsClient({ top3, rest, userId, userName, subscripti
                         i < monthlyGuideCount
                           ? 'bg-slate-600 border-slate-600'
                           : i === monthlyGuideCount
-                          ? 'bg-purple-500 border-purple-500'
+                          ? 'bg-emerald-500 border-emerald-500'
                           : 'border-slate-700'
                       }`} />
                     ))}
@@ -129,7 +133,7 @@ export default function ResultsClient({ top3, rest, userId, userName, subscripti
                 </button>
                 <button
                   onClick={() => doGenerate(confirmPath)}
-                  className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-400 hover:to-pink-400 text-white font-semibold transition-all text-sm"
+                  className="flex-1 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white font-semibold transition-all text-sm"
                 >
                   Yes, generate it →
                 </button>
@@ -147,7 +151,7 @@ export default function ResultsClient({ top3, rest, userId, userName, subscripti
             <div className="flex gap-1">
               {Array.from({ length: MONTHLY_LIMIT }).map((_, i) => (
                 <div key={i} className={`w-3 h-3 rounded-full ${
-                  i < monthlyGuideCount ? 'bg-slate-600' : 'bg-purple-500'
+                  i < monthlyGuideCount ? 'bg-slate-600' : 'bg-emerald-500'
                 }`} />
               ))}
             </div>
@@ -157,7 +161,7 @@ export default function ResultsClient({ top3, rest, userId, userName, subscripti
             </span>
           </div>
           {!isPro && (
-            <button onClick={() => setShowUpgrade(true)} className="shrink-0 text-xs text-purple-400 hover:text-purple-300 font-medium transition-colors">
+            <button onClick={() => setShowUpgrade(true)} className="shrink-0 text-xs text-emerald-400 hover:text-emerald-300 font-medium transition-colors">
               Upgrade for 3/month →
             </button>
           )}
@@ -184,13 +188,13 @@ export default function ResultsClient({ top3, rest, userId, userName, subscripti
               key={path.name}
               className={`relative rounded-2xl border overflow-hidden transition-all
                 ${i === 0
-                  ? 'border-purple-500/50 bg-gradient-to-br from-purple-500/15 to-pink-500/10'
+                  ? 'border-emerald-500/40 bg-emerald-500/8'
                   : 'border-white/10 bg-white/5'
                 }`}
             >
               {/* Rank badge */}
               {i === 0 && (
-                <div className="absolute top-4 right-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-black px-3 py-1 rounded-full uppercase tracking-wide">
+                <div className="absolute top-4 right-4 bg-emerald-500 text-white text-xs font-black px-3 py-1 rounded-full uppercase tracking-wide">
                   Best Match
                 </div>
               )}
@@ -204,7 +208,7 @@ export default function ResultsClient({ top3, rest, userId, userName, subscripti
                     <div className="flex items-center gap-3 mb-1 flex-wrap">
                       <h2 className="text-xl md:text-2xl font-black text-white">{path.name}</h2>
                       <span className={`text-sm font-bold px-2.5 py-0.5 rounded-full
-                        ${i === 0 ? 'bg-purple-500/30 text-purple-200' : 'bg-white/10 text-slate-300'}`}>
+                        ${i === 0 ? 'bg-emerald-500/20 text-emerald-300' : 'bg-white/10 text-slate-300'}`}>
                         #{i + 1}
                       </span>
                     </div>
@@ -236,7 +240,7 @@ export default function ResultsClient({ top3, rest, userId, userName, subscripti
                     disabled={loading !== null}
                     className={`flex items-center gap-2 font-bold px-6 py-3 rounded-xl text-sm transition-all
                       ${i === 0
-                        ? 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-400 hover:to-pink-400 text-white shadow-lg shadow-purple-500/25'
+                        ? 'bg-emerald-500 hover:bg-emerald-400 text-white shadow-lg shadow-emerald-500/25'
                         : 'bg-white/10 hover:bg-white/15 text-white border border-white/10'
                       } disabled:opacity-50`}
                   >
@@ -249,7 +253,7 @@ export default function ResultsClient({ top3, rest, userId, userName, subscripti
                         Building guide...
                       </>
                     ) : atLimit ? (
-                      <>⭐ Upgrade for more guides</>
+                      <>↑ Upgrade for more guides</>
                     ) : (
                       <>
                         Generate My Guide
@@ -284,7 +288,7 @@ export default function ResultsClient({ top3, rest, userId, userName, subscripti
                 <div className="hidden sm:flex items-center gap-2 w-28">
                   <div className="flex-1 h-1 bg-white/10 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-purple-500/60 rounded-full"
+                      className="h-full bg-emerald-500/60 rounded-full"
                       style={{ width: `${path.matchPercent}%` }}
                     />
                   </div>
@@ -294,7 +298,7 @@ export default function ResultsClient({ top3, rest, userId, userName, subscripti
                 <button
                   onClick={() => handleGenerate(path.name)}
                   disabled={loading !== null}
-                  className="opacity-0 group-hover:opacity-100 text-purple-400 hover:text-purple-300 text-xs font-semibold transition-all whitespace-nowrap disabled:opacity-30"
+                  className="opacity-0 group-hover:opacity-100 text-emerald-400 hover:text-emerald-300 text-xs font-semibold transition-all whitespace-nowrap disabled:opacity-30"
                 >
                   Generate →
                 </button>
