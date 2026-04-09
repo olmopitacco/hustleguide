@@ -239,7 +239,7 @@ export default function LandingClient() {
   const FAQS = [
     {
       q: 'Is this actually free?',
-      a: 'Yes. You can take the quiz, get matched, and follow one full 12-week guide for free. Pro unlocks all three of your matched paths and removes the AI coaching limit.',
+      a: 'Yes. Free gives you 1 guide per month with access to the first 2 weeks and limited AI coaching. Pro gives you up to 3 guides per month, all 12 weeks, and unlimited AI coaching.',
     },
     {
       q: 'How is this different from just asking ChatGPT?',
@@ -442,7 +442,7 @@ export default function LandingClient() {
               <div className="text-5xl font-black text-white mb-1">€0</div>
               <div className="text-slate-500 text-sm mb-8">Forever free</div>
               <ul className="space-y-3 mb-8">
-                {['Quiz & path matching', '1 full guide (12 weeks)', 'AI coach (5 messages/day)', 'Week-by-week daily plans'].map(f => (
+                {['Quiz & path matching', '1 guide/month (weeks 1–2)', 'AI coach (limited messages)', 'Week-by-week daily plans'].map(f => (
                   <li key={f} className="flex items-center gap-3 text-slate-300 text-sm">
                     <span className="text-emerald-400 font-bold">✓</span> {f}
                   </li>
@@ -467,10 +467,10 @@ export default function LandingClient() {
               <ul className="space-y-3 mb-8">
                 {[
                   'Everything in Free',
-                  'All 3 matched path guides',
+                  'Up to 3 guides/month',
+                  'All 12 weeks per guide',
                   'Unlimited AI coach messages',
                   'Progress-adapted weekly plans',
-                  'Priority support',
                 ].map(f => (
                   <li key={f} className="flex items-center gap-3 text-slate-200 text-sm">
                     <span className="text-emerald-400 font-bold">✓</span> {f}

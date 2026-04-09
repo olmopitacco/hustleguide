@@ -17,10 +17,10 @@ export default async function PricingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="min-h-screen bg-[#070d1a]">
       <nav className="flex items-center justify-between px-6 py-5 max-w-5xl mx-auto border-b border-white/10">
         <Link href="/" className="text-2xl font-black text-white tracking-tight">
-          Hustle<span className="text-purple-400">Guide</span>
+          Hustle<span className="text-emerald-400">Guide</span>
         </Link>
         <div className="flex items-center gap-4">
           {user ? (
@@ -47,18 +47,18 @@ export default async function PricingPage() {
             <div className="text-slate-500 text-sm mb-8">Forever free</div>
             <ul className="space-y-3 mb-8">
               {[
-                '1 hustle guide',
-                'Week 1 plan',
-                '5 AI coach messages / day',
-                'Basic weekly plans',
+                '1 guide per month',
+                'Weeks 1–2 only',
+                'Limited AI coach messages',
+                'Week-by-week daily plans',
               ].map(f => (
                 <li key={f} className="flex items-center gap-3 text-slate-300 text-sm">
-                  <span className="text-slate-500">✓</span> {f}
+                  <span className="text-emerald-400 font-bold">✓</span> {f}
                 </li>
               ))}
               {[
-                'Multi-week personalized plans',
-                'Unlimited guides',
+                'Weeks 3–12',
+                'Up to 3 guides/month',
                 'Unlimited AI coaching',
               ].map(f => (
                 <li key={f} className="flex items-center gap-3 text-slate-600 text-sm line-through">
@@ -75,23 +75,23 @@ export default async function PricingPage() {
           </div>
 
           {/* Pro */}
-          <div className="bg-gradient-to-b from-purple-500/20 to-pink-500/10 border border-purple-500/40 rounded-2xl p-8 relative">
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold px-4 py-1 rounded-full">
-              MOST POPULAR
+          <div className="bg-emerald-500/8 border border-emerald-500/40 rounded-2xl p-8 relative">
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-emerald-500 text-white text-xs font-bold px-4 py-1 rounded-full uppercase tracking-wide">
+              Most Popular
             </div>
-            <div className="text-purple-400 text-sm font-bold uppercase tracking-widest mb-3">Pro</div>
-            <div className="text-4xl font-black text-white mb-1">$12</div>
+            <div className="text-emerald-400 text-sm font-bold uppercase tracking-widest mb-3">Pro</div>
+            <div className="text-4xl font-black text-white mb-1">€12</div>
             <div className="text-slate-500 text-sm mb-8">per month, cancel anytime</div>
             <ul className="space-y-3 mb-8">
               {[
-                'Unlimited hustle guides',
-                'Full 12-week personalized plans',
+                'Up to 3 guides per month',
+                'All 12 weeks per guide',
                 'Unlimited AI coach messages',
-                'Progress-based weekly adaptation',
+                'Progress-adapted weekly plans',
                 'Priority support',
               ].map(f => (
                 <li key={f} className="flex items-center gap-3 text-slate-200 text-sm">
-                  <span className="text-green-400 font-bold">✓</span> {f}
+                  <span className="text-emerald-400 font-bold">✓</span> {f}
                 </li>
               ))}
             </ul>

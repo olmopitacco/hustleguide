@@ -582,8 +582,8 @@ export default function DashboardClient({
                   </div>
                   <p className="text-slate-500 text-xs">
                     {isPro
-                      ? 'Unlimited guides and AI coaching.'
-                      : '1 guide, 5 AI messages/day.'}
+                      ? 'Up to 3 guides/month · all 12 weeks · unlimited AI coach'
+                      : '1 guide/month · weeks 1–2 only · limited AI coach'}
                   </p>
                 </div>
                 {!isPro && (
