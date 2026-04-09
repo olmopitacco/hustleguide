@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/weekly-nudge",
+      "schedule": "0 9 * * 1"
+    },
+    {
+      "path": "/api/cron/reengagement",
+      "schedule": "0 10 * * *"
+    }
+  ]
+}

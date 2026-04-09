@@ -130,6 +130,22 @@ async function handlePost(request: Request) {
 
     if (saveError) {
       console.error('[generate-guide] SAVE FAILED — missing UPDATE RLS policy? Run supabase/stripe.sql in Supabase SQL Editor.', saveError.message)
+    } else {
+      // Fire guide-ready email (non-blocking)
+      const { data: userData } = await supabase.auth.getUser()
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://hustleguide.vercel.app'
+      fetch(`${appUrl}/api/emails/guide-ready`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user.id,
+          name: userData.user?.user_metadata?.name ?? userData.user?.user_metadata?.full_name ?? 'there',
+          email: user.email,
+          pathName,
+          week1Content: (week as Record<string, unknown>),
+          guideId,
+        }),
+      }).catch(e => console.error('[guide-ready email trigger]', e))
     }
   }
 

@@ -10,6 +10,7 @@ export default function SignupPage() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [agreed, setAgreed] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -17,16 +18,17 @@ export default function SignupPage() {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!agreed) { setError('Please agree to the Terms of Service and Privacy Policy to continue.'); return }
     setLoading(true)
     setError('')
 
     const supabase = createClient()
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: { full_name: name, name },
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: `${window.location.origin}/auth/callback?new=true`,
       },
     })
 
@@ -34,18 +36,27 @@ export default function SignupPage() {
       setError(error.message)
       setLoading(false)
     } else {
+      // For email signups, also trigger welcome email directly since callback may not fire immediately
+      if (data.user) {
+        fetch('/api/emails/welcome', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: data.user.id, name, email }),
+        }).catch(() => {})
+      }
       setSuccess(true)
       setLoading(false)
     }
   }
 
   const handleGoogleSignup = async () => {
+    if (!agreed) { setError('Please agree to the Terms of Service and Privacy Policy to continue.'); return }
     setGoogleLoading(true)
     setError('')
     const supabase = createClient()
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
+      options: { redirectTo: `${window.location.origin}/auth/callback?new=true` },
     })
     if (error) {
       setError(error.message)
@@ -145,6 +156,33 @@ export default function SignupPage() {
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors"
               />
             </div>
+
+            {/* Terms checkbox */}
+            <label className="flex items-start gap-3 cursor-pointer group">
+              <div className="relative mt-0.5 shrink-0">
+                <input
+                  type="checkbox"
+                  checked={agreed}
+                  onChange={e => setAgreed(e.target.checked)}
+                  className="sr-only"
+                />
+                <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
+                  agreed ? 'bg-emerald-500 border-emerald-500' : 'border-white/20 bg-white/5'
+                }`}>
+                  {agreed && (
+                    <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 10 8">
+                      <path d="M1 4l3 3 5-6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  )}
+                </div>
+              </div>
+              <span className="text-sm text-slate-400 leading-relaxed">
+                I agree to the{' '}
+                <Link href="/terms" className="text-emerald-400 hover:text-emerald-300 underline" target="_blank">Terms of Service</Link>
+                {' '}and{' '}
+                <Link href="/privacy" className="text-emerald-400 hover:text-emerald-300 underline" target="_blank">Privacy Policy</Link>
+              </span>
+            </label>
 
             {error && (
               <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-xl px-4 py-3">
