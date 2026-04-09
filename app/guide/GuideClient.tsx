@@ -16,6 +16,7 @@ type Props = {
   userName: string
   existingContent: GuideContent | null
   checkedInWeeks: number[]
+  savedCriteriaChecked: Record<number, number[]>
   subscriptionStatus: string
 }
 
@@ -631,7 +632,7 @@ function WeekView({
 
 export default function GuideClient({
   pathName, guideId, userId, userName, existingContent, checkedInWeeks: initialCheckedInWeeks,
-  subscriptionStatus,
+  savedCriteriaChecked, subscriptionStatus,
 }: Props) {
   const supabase = createClient()
   const router = useRouter()
@@ -643,10 +644,36 @@ export default function GuideClient({
   const [elapsed, setElapsed] = useState(0)
   const [loadingLabel, setLoadingLabel] = useState('')
   const [error, setError] = useState('')
-  const [activeWeek, setActiveWeek] = useState(1)
 
-  const [checkedCriteria, setCheckedCriteria] = useState<Record<number, Set<number>>>({})
+  // Start on the latest unlocked week (highest checked-in week + 1, or 1)
+  const initialActiveWeek = initialCheckedInWeeks.length > 0
+    ? Math.max(...initialCheckedInWeeks) + 1
+    : 1
+  const [activeWeek, setActiveWeek] = useState(initialActiveWeek)
+
+  // Restore saved criteria state from Supabase
+  const initialCriteria: Record<number, Set<number>> = {}
+  for (const [weekNum, indices] of Object.entries(savedCriteriaChecked)) {
+    initialCriteria[Number(weekNum)] = new Set(indices)
+  }
+  const [checkedCriteria, setCheckedCriteria] = useState<Record<number, Set<number>>>(initialCriteria)
   const [checkedInWeeks, setCheckedInWeeks] = useState<Set<number>>(new Set(initialCheckedInWeeks))
+
+  // Debounced save of criteria to Supabase
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  function persistCriteria(updated: Record<number, Set<number>>) {
+    if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current)
+    saveTimeoutRef.current = setTimeout(async () => {
+      const serialized: Record<number, number[]> = {}
+      for (const [k, v] of Object.entries(updated)) {
+        serialized[Number(k)] = Array.from(v)
+      }
+      await supabase
+        .from('generated_guides')
+        .update({ criteria_checked: serialized })
+        .eq('id', guideId)
+    }, 800)
+  }
 
   const [selectedTask, setSelectedTask] = useState<DetailedTask | null>(null)
   const [showCheckin, setShowCheckin] = useState(false)
@@ -743,7 +770,9 @@ export default function GuideClient({
     setCheckedCriteria(prev => {
       const set = new Set(prev[weekNum] ?? [])
       set.has(idx) ? set.delete(idx) : set.add(idx)
-      return { ...prev, [weekNum]: set }
+      const updated = { ...prev, [weekNum]: set }
+      persistCriteria(updated)
+      return updated
     })
   }
 

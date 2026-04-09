@@ -21,15 +21,19 @@ export default async function GuidePage({ searchParams }: Props) {
 
   // Load existing guide if already generated
   let existingContent: GuideContent | null = null
+  let savedCriteriaChecked: Record<number, number[]> = {}
   if (id) {
     const { data: guide } = await supabase
       .from('generated_guides')
-      .select('content')
+      .select('content, criteria_checked')
       .eq('id', id)
       .eq('user_id', user.id)
       .single()
     if (isGuideContent(guide?.content)) {
       existingContent = guide.content as GuideContent
+    }
+    if (guide?.criteria_checked && typeof guide.criteria_checked === 'object') {
+      savedCriteriaChecked = guide.criteria_checked as Record<number, number[]>
     }
   }
 
@@ -52,6 +56,7 @@ export default async function GuidePage({ searchParams }: Props) {
       userName={userData?.name?.split(' ')[0] ?? 'there'}
       existingContent={existingContent}
       checkedInWeeks={checkedInWeeks}
+      savedCriteriaChecked={savedCriteriaChecked}
       subscriptionStatus={userData?.subscription_status ?? 'free'}
     />
   )
