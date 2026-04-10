@@ -1,11 +1,15 @@
 import { createClient } from '@/lib/supabase/server'
-import { stripe, STRIPE_PRICE_ID, APP_URL } from '@/lib/stripe'
+import { stripe, STRIPE_PRICE_ID, STRIPE_ANNUAL_PRICE_ID, APP_URL } from '@/lib/stripe'
 
-export async function POST() {
+export async function POST(request: Request) {
   try {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
+
+    const body = await request.json().catch(() => ({}))
+    const plan: 'monthly' | 'annual' = body.plan === 'annual' ? 'annual' : 'monthly'
+    const priceId = plan === 'annual' ? STRIPE_ANNUAL_PRICE_ID : STRIPE_PRICE_ID
 
     const { data: userData } = await supabase
       .from('users')
@@ -27,7 +31,7 @@ export async function POST() {
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       mode: 'subscription',
-      line_items: [{ price: STRIPE_PRICE_ID, quantity: 1 }],
+      line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${APP_URL}/dashboard?upgraded=1`,
       cancel_url: `${APP_URL}/pricing`,
       metadata: { supabase_user_id: user.id },

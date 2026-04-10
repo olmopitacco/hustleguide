@@ -80,9 +80,7 @@ export default async function PricingPage() {
               Most Popular
             </div>
             <div className="text-emerald-400 text-sm font-bold uppercase tracking-widest mb-3">Pro</div>
-            <div className="text-4xl font-black text-white mb-1">€12</div>
-            <div className="text-slate-500 text-sm mb-8">per month, cancel anytime</div>
-            <ul className="space-y-3 mb-8">
+            <ul className="space-y-3 mb-8 mt-2">
               {[
                 'Up to 3 guides per month',
                 'All 12 weeks per guide',
