@@ -34,21 +34,35 @@ const WEEK_JSON_SHAPE = `{
   "completion_criteria": []
 }`
 
+const LANGUAGE_NAMES: Record<string, string> = {
+  en: 'English', it: 'Italian', es: 'Spanish', fr: 'French',
+  de: 'German', pt: 'Portuguese', nl: 'Dutch', pl: 'Polish',
+}
+
 function buildWeek1Prompt(profile: Record<string, unknown>, pathName: string): string {
   const skills = Array.isArray(profile.skills) ? profile.skills.join(', ') : 'None listed'
   const hates = Array.isArray(profile.hates) ? profile.hates.join(', ') : 'None listed'
+  const lang = typeof profile.preferred_language === 'string' ? profile.preferred_language : 'en'
+  const langName = LANGUAGE_NAMES[lang] ?? 'English'
+  const location = profile.location ?? 'Not specified'
 
   return `You are an expert business coach.
 Create a detailed, actionable Week 1 plan for someone starting ${pathName}.
 
 Profile:
-- Location: ${profile.location ?? 'Not specified'}
+- Location: ${location}
 - Hours per week: ${profile.hours_available ?? 'Not specified'}
 - Budget: ${profile.budget ?? 'Not specified'}
 - Skills: ${skills}
 - Income needed by: ${profile.income_timeline ?? 'Not specified'}
 - Hates: ${hates}
 - Work style: ${profile.preferences ?? 'Not specified'}
+
+IMPORTANT LANGUAGE & LOCALISATION RULES:
+- Generate ALL content in ${langName}.
+- Reference platforms, tools, income figures, and examples that are relevant to the user's location (${location}) and country.
+- Use local currency and realistic local income figures where applicable.
+- Keep platform names, tool names, and brand names in their original form (do not translate proper nouns).
 
 Make every task extremely specific and actionable. Include real example scripts and templates where relevant. Be honest about difficulty and realistic about outcomes.
 

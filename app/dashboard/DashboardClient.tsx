@@ -3,7 +3,10 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useTranslation } from 'react-i18next'
 import UpgradeModal from '@/app/components/UpgradeModal'
+import LanguageSwitcher from '@/app/components/LanguageSwitcher'
+import { useLanguage } from '@/app/components/I18nProvider'
 import { createClient } from '@/lib/supabase/client'
 
 type Guide = {
@@ -90,6 +93,9 @@ export default function DashboardClient({
   upgradedParam,
 }: Props) {
   const router = useRouter()
+  const { t } = useTranslation('common')
+  const { language, setLanguage } = useLanguage()
+  const [langSaved, setLangSaved] = useState(false)
   const [section, setSection] = useState('guide')
   const [showUpgrade, setShowUpgrade] = useState(false)
   const [cancelLoading, setCancelLoading] = useState(false)
@@ -655,6 +661,33 @@ export default function DashboardClient({
                   Sign out →
                 </button>
               </form>
+            </div>
+
+            {/* Language and Region */}
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+              <h3 className="text-white font-bold mb-1">{t('settings.language_section')}</h3>
+              <p className="text-slate-500 text-xs mb-4">{t('settings.language_note')}</p>
+              <div className="space-y-3">
+                <div>
+                  <label className="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-2 block">
+                    {t('settings.language_label')}
+                  </label>
+                  <LanguageSwitcher variant="settings" />
+                </div>
+              </div>
+              {langSaved && (
+                <p className="text-emerald-400 text-sm mt-3">{t('settings.prefs_saved')}</p>
+              )}
+              <button
+                onClick={async () => {
+                  await setLanguage(language)
+                  setLangSaved(true)
+                  setTimeout(() => setLangSaved(false), 2500)
+                }}
+                className="mt-4 bg-emerald-500 hover:bg-emerald-400 text-white text-sm font-bold px-4 py-2 rounded-xl transition-all"
+              >
+                {t('settings.save_prefs')}
+              </button>
             </div>
 
             {/* Delete Account */}

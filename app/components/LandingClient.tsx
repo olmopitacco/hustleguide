@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
+import { useTranslation } from 'react-i18next'
 import { IconTarget, IconCalendar, IconRefresh, IconChat, IconTrendUp, IconClock, IconMap, IconBrain, IconX } from './Icons'
+import LanguageSwitcher from './LanguageSwitcher'
 
 // ─── Scroll reveal hook ───────────────────────────────────────────────────────
 
@@ -21,6 +23,7 @@ function useScrollReveal() {
 // ─── Sticky nav ───────────────────────────────────────────────────────────────
 
 function Nav() {
+  const { t } = useTranslation('common')
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   useEffect(() => {
@@ -39,10 +42,11 @@ function Nav() {
         </Link>
 
         {/* Desktop links */}
-        <div className="hidden md:flex items-center gap-8">
-          <a href="#how-it-works" className="text-slate-400 hover:text-white text-sm font-medium transition-colors">How it works</a>
-          <a href="#pricing" className="text-slate-400 hover:text-white text-sm font-medium transition-colors">Pricing</a>
-          <Link href="/login" className="text-slate-400 hover:text-white text-sm font-medium transition-colors">Login</Link>
+        <div className="hidden md:flex items-center gap-6">
+          <a href="#how-it-works" className="text-slate-400 hover:text-white text-sm font-medium transition-colors">{t('nav.how_it_works')}</a>
+          <a href="#pricing" className="text-slate-400 hover:text-white text-sm font-medium transition-colors">{t('nav.pricing')}</a>
+          <Link href="/login" className="text-slate-400 hover:text-white text-sm font-medium transition-colors">{t('nav.login')}</Link>
+          <LanguageSwitcher variant="navbar" />
         </div>
 
         <div className="hidden md:flex items-center gap-3">
@@ -50,28 +54,31 @@ function Nav() {
             href="/signup"
             className="bg-emerald-500 hover:bg-emerald-400 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition-all shadow-lg shadow-emerald-500/25"
           >
-            Find My Path — Free
+            {t('nav.cta')}
           </Link>
         </div>
 
-        {/* Mobile menu toggle */}
-        <button className="md:hidden text-slate-400 hover:text-white" onClick={() => setMenuOpen(o => !o)}>
-          {menuOpen ? (
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/></svg>
-          ) : (
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16"/></svg>
-          )}
-        </button>
+        {/* Mobile: language + hamburger */}
+        <div className="md:hidden flex items-center gap-2">
+          <LanguageSwitcher variant="navbar" />
+          <button className="text-slate-400 hover:text-white" onClick={() => setMenuOpen(o => !o)}>
+            {menuOpen ? (
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/></svg>
+            ) : (
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16"/></svg>
+            )}
+          </button>
+        </div>
       </nav>
 
       {/* Mobile menu */}
       {menuOpen && (
         <div className="md:hidden bg-[#0a0f1e]/98 border-t border-white/8 px-6 py-5 flex flex-col gap-4">
-          <a href="#how-it-works" onClick={() => setMenuOpen(false)} className="text-slate-300 hover:text-white text-sm font-medium">How it works</a>
-          <a href="#pricing" onClick={() => setMenuOpen(false)} className="text-slate-300 hover:text-white text-sm font-medium">Pricing</a>
-          <Link href="/login" className="text-slate-300 hover:text-white text-sm font-medium">Login</Link>
+          <a href="#how-it-works" onClick={() => setMenuOpen(false)} className="text-slate-300 hover:text-white text-sm font-medium">{t('nav.how_it_works')}</a>
+          <a href="#pricing" onClick={() => setMenuOpen(false)} className="text-slate-300 hover:text-white text-sm font-medium">{t('nav.pricing')}</a>
+          <Link href="/login" className="text-slate-300 hover:text-white text-sm font-medium">{t('nav.login')}</Link>
           <Link href="/signup" className="bg-emerald-500 hover:bg-emerald-400 text-white text-sm font-bold px-5 py-3 rounded-xl transition-all text-center">
-            Find My Path — Free
+            {t('nav.cta')}
           </Link>
         </div>
       )}
@@ -188,6 +195,7 @@ function FAQItem({ q, a }: { q: string; a: string }) {
 
 export default function LandingClient() {
   useScrollReveal()
+  const { t } = useTranslation('common')
 
   const TESTIMONIALS = [
     {
@@ -213,51 +221,6 @@ export default function LandingClient() {
     },
   ]
 
-  const FEATURES = [
-    {
-      icon: <IconTarget className="w-6 h-6" />,
-      title: 'Matched to your situation',
-      desc: 'We score 40+ online income paths against your hours, budget, skills, and goals — and show you what actually fits.',
-    },
-    {
-      icon: <IconCalendar className="w-6 h-6" />,
-      title: 'Daily tasks, not vague advice',
-      desc: 'Each week gives you specific actions, real scripts, and the exact tools to use. Not "build an audience" type advice.',
-    },
-    {
-      icon: <IconRefresh className="w-6 h-6" />,
-      title: 'Updates based on your progress',
-      desc: 'After each week you check in. Your next week is generated from your actual results — not a template.',
-    },
-    {
-      icon: <IconChat className="w-6 h-6" />,
-      title: 'AI coach on every step',
-      desc: 'Ask anything, anytime. Your coach knows your path, your current week, and your specific situation.',
-    },
-  ]
-
-  const FAQS = [
-    {
-      q: 'Is this actually free?',
-      a: 'Yes. Free gives you 1 guide per month with access to the first 2 weeks and limited AI coaching. Pro gives you up to 3 guides per month, all 12 weeks, and unlimited AI coaching.',
-    },
-    {
-      q: 'How is this different from just asking ChatGPT?',
-      a: 'ChatGPT gives you generic advice. HustleGuide builds a plan around your specific hours, budget, location, and skills. And every week it updates based on your actual progress. It\'s a roadmap that moves with you, not a chat window.',
-    },
-    {
-      q: 'What if I pick the wrong path?',
-      a: 'Retake the quiz and generate a new set of matches. Your situation changes and your plan should change with it.',
-    },
-    {
-      q: 'How long until I make money?',
-      a: 'Depends on the path and how much time you put in. We give honest, realistic estimates. Most people see first results somewhere between week 3 and week 8.',
-    },
-    {
-      q: 'Can I cancel Pro anytime?',
-      a: 'Yes, one click from your settings. No questions, no guilt trips, no retention flows.',
-    },
-  ]
 
   return (
     <div className="bg-[#070d1a] text-white overflow-x-hidden">
@@ -265,7 +228,6 @@ export default function LandingClient() {
 
       {/* ── HERO ── */}
       <section className="relative pt-32 pb-24 px-6 overflow-hidden">
-        {/* Background glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-emerald-500/8 blur-3xl rounded-full pointer-events-none" />
         <div className="absolute top-20 right-0 w-96 h-96 bg-blue-500/6 blur-3xl rounded-full pointer-events-none" />
 
@@ -273,37 +235,24 @@ export default function LandingClient() {
           <div className="animate-fade-up">
             <div className="inline-flex items-center gap-2 bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-bold px-3 py-1.5 rounded-full mb-6 uppercase tracking-wider">
               <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
-              Free to start — no credit card
+              {t('hero.badge')}
             </div>
-
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black leading-[1.05] mb-4">
-              Your personal<br />
+              {t('hero.headline_1')}<br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">
-                income roadmap.
+                {t('hero.headline_2')}
               </span>
             </h1>
-
-            <p className="text-slate-300 text-lg leading-relaxed mb-3 max-w-lg font-medium">
-              Answer 8 questions. Get a week-by-week action plan to earn your first money online — matched to your skills, time, and budget.
-            </p>
-            <p className="text-slate-500 text-sm leading-relaxed mb-8 max-w-lg">
-              Not a course. Not generic advice. A real plan built for your situation, with an AI coach that guides you every step of the way.
-            </p>
-
+            <p className="text-slate-300 text-lg leading-relaxed mb-3 max-w-lg font-medium">{t('hero.subtitle_1')}</p>
+            <p className="text-slate-500 text-sm leading-relaxed mb-8 max-w-lg">{t('hero.subtitle_2')}</p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link
-                href="/signup"
-                className="bg-emerald-500 hover:bg-emerald-400 text-white font-bold px-8 py-4 rounded-xl text-base transition-all shadow-xl shadow-emerald-500/30 text-center"
-              >
-                Get My Free Roadmap →
+              <Link href="/signup" className="bg-emerald-500 hover:bg-emerald-400 text-white font-bold px-8 py-4 rounded-xl text-base transition-all shadow-xl shadow-emerald-500/30 text-center">
+                {t('hero.cta')}
               </Link>
             </div>
-            <p className="text-slate-600 text-sm mt-3">2 minutes. No credit card. No fluff.</p>
+            <p className="text-slate-600 text-sm mt-3">{t('hero.tagline')}</p>
           </div>
-
-          <div className="hidden md:block">
-            <GuideMockup />
-          </div>
+          <div className="hidden md:block"><GuideMockup /></div>
         </div>
       </section>
 
@@ -318,21 +267,18 @@ export default function LandingClient() {
                 </svg>
               ))}
             </div>
-            <p className="text-white font-bold text-lg">Real people. Real results.</p>
-            <p className="text-slate-500 text-sm mt-1">1,000+ people already building income with HustleGuide</p>
+            <p className="text-white font-bold text-lg">{t('social_proof.headline')}</p>
+            <p className="text-slate-500 text-sm mt-1">{t('social_proof.subheadline')}</p>
           </div>
-
           <div className="grid md:grid-cols-3 gap-5 scroll-reveal-stagger visible">
-            {TESTIMONIALS.map(t => (
-              <div key={t.name} className="bg-white/4 border border-white/8 rounded-2xl p-5">
-                <p className="text-slate-300 text-sm leading-relaxed mb-4 italic">&ldquo;{t.quote}&rdquo;</p>
+            {TESTIMONIALS.map(tm => (
+              <div key={tm.name} className="bg-white/4 border border-white/8 rounded-2xl p-5">
+                <p className="text-slate-300 text-sm leading-relaxed mb-4 italic">&ldquo;{tm.quote}&rdquo;</p>
                 <div className="flex items-center gap-3">
-                  <div className={`w-8 h-8 rounded-full ${t.color} flex items-center justify-center text-white font-bold text-sm shrink-0`}>
-                    {t.avatar}
-                  </div>
+                  <div className={`w-8 h-8 rounded-full ${tm.color} flex items-center justify-center text-white font-bold text-sm shrink-0`}>{tm.avatar}</div>
                   <div>
-                    <div className="text-white text-sm font-semibold">{t.name}</div>
-                    <div className="text-slate-500 text-xs">{t.location}</div>
+                    <div className="text-white text-sm font-semibold">{tm.name}</div>
+                    <div className="text-slate-500 text-xs">{tm.location}</div>
                   </div>
                 </div>
               </div>
@@ -346,17 +292,16 @@ export default function LandingClient() {
         <div className="max-w-4xl mx-auto text-center">
           <div className="scroll-reveal">
             <h2 className="text-3xl md:text-4xl font-black mb-4 leading-tight">
-              You want to earn online.<br />
-              <span className="text-slate-400">So why haven&apos;t you started yet?</span>
+              {t('problem.headline')}<br />
+              <span className="text-slate-400">{t('problem.headline_2')}</span>
             </h2>
-            <p className="text-slate-500 text-lg mb-14">It&apos;s not motivation you&apos;re missing. It&apos;s a clear, specific plan built for your actual situation.</p>
+            <p className="text-slate-500 text-lg mb-14">{t('problem.subtitle')}</p>
           </div>
-
           <div className="grid md:grid-cols-3 gap-6 scroll-reveal-stagger">
             {[
-              { icon: <IconX className="w-6 h-6" />, title: 'Generic advice that ignores your situation', desc: 'Every guide assumes you have 40 hours a week, €5,000 to invest, and live in the US.' },
-              { icon: <IconMap className="w-6 h-6" />, title: 'No clear starting point or step-by-step plan', desc: '"Build an audience" is not a plan. You need specific tasks for specific days.' },
-              { icon: <IconClock className="w-6 h-6" />, title: 'Wasted months on the wrong thing', desc: 'Most people try 3 different paths before finding one that actually fits their life.' },
+              { icon: <IconX className="w-6 h-6" />, title: t('problem.pain_1_title'), desc: t('problem.pain_1_desc') },
+              { icon: <IconMap className="w-6 h-6" />, title: t('problem.pain_2_title'), desc: t('problem.pain_2_desc') },
+              { icon: <IconClock className="w-6 h-6" />, title: t('problem.pain_3_title'), desc: t('problem.pain_3_desc') },
             ].map(p => (
               <div key={p.title} className="bg-red-950/20 border border-red-900/30 rounded-2xl p-6 text-left">
                 <div className="text-red-400/70 mb-3">{p.icon}</div>
@@ -372,27 +317,14 @@ export default function LandingClient() {
       <section id="how-it-works" className="py-24 px-6 bg-white/2 border-y border-white/6">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16 scroll-reveal">
-            <h2 className="text-3xl md:text-4xl font-black mb-3">How it works</h2>
-            <p className="text-slate-400">From zero to a personalized income plan in under 2 minutes.</p>
+            <h2 className="text-3xl md:text-4xl font-black mb-3">{t('how_it_works.headline')}</h2>
+            <p className="text-slate-400">{t('how_it_works.subtitle')}</p>
           </div>
-
           <div className="grid md:grid-cols-3 gap-6 scroll-reveal-stagger">
             {[
-              {
-                n: '01', icon: <IconBrain className="w-6 h-6" />,
-                title: 'Tell us about yourself',
-                desc: '8 quick questions: your available hours, budget, existing skills, and how fast you need income. Takes 2 minutes.',
-              },
-              {
-                n: '02', icon: <IconTarget className="w-6 h-6" />,
-                title: 'Get your top 3 matched paths',
-                desc: 'We score 40+ online income paths against your profile and show the best fits — with realistic earnings and timelines.',
-              },
-              {
-                n: '03', icon: <IconTrendUp className="w-6 h-6" />,
-                title: 'Follow your week-by-week plan',
-                desc: 'Each week you get specific daily tasks, scripts, and tools. Complete it, check in, and your next week adapts to your actual progress.',
-              },
+              { n: '01', icon: <IconBrain className="w-6 h-6" />, title: t('how_it_works.step_1_title'), desc: t('how_it_works.step_1_desc') },
+              { n: '02', icon: <IconTarget className="w-6 h-6" />, title: t('how_it_works.step_2_title'), desc: t('how_it_works.step_2_desc') },
+              { n: '03', icon: <IconTrendUp className="w-6 h-6" />, title: t('how_it_works.step_3_title'), desc: t('how_it_works.step_3_desc') },
             ].map(s => (
               <div key={s.n} className="relative bg-[#0d1421] border border-white/8 rounded-2xl p-6">
                 <div className="text-emerald-400 font-black text-4xl font-mono mb-4 opacity-30 absolute top-5 right-5">{s.n}</div>
@@ -410,14 +342,18 @@ export default function LandingClient() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16 scroll-reveal">
             <h2 className="text-3xl md:text-4xl font-black mb-3">
-              Everything you need.<br />
-              <span className="text-emerald-400">Nothing you don&apos;t.</span>
+              {t('features.headline')}<br />
+              <span className="text-emerald-400">{t('features.headline_2')}</span>
             </h2>
-            <p className="text-slate-400">No fluff. No upsells. Just a clear plan and a coach to help you execute it.</p>
+            <p className="text-slate-400">{t('features.subtitle')}</p>
           </div>
-
           <div className="grid md:grid-cols-2 gap-5 scroll-reveal-stagger">
-            {FEATURES.map(f => (
+            {[
+              { icon: <IconTarget className="w-6 h-6" />, title: t('features.f1_title'), desc: t('features.f1_desc') },
+              { icon: <IconCalendar className="w-6 h-6" />, title: t('features.f2_title'), desc: t('features.f2_desc') },
+              { icon: <IconRefresh className="w-6 h-6" />, title: t('features.f3_title'), desc: t('features.f3_desc') },
+              { icon: <IconChat className="w-6 h-6" />, title: t('features.f4_title'), desc: t('features.f4_desc') },
+            ].map(f => (
               <div key={f.title} className="flex gap-4 bg-white/3 border border-white/8 rounded-2xl p-6 hover:border-emerald-500/30 hover:bg-emerald-500/5 transition-all">
                 <div className="text-emerald-400 shrink-0 mt-0.5">{f.icon}</div>
                 <div>
@@ -434,62 +370,46 @@ export default function LandingClient() {
       <section id="pricing" className="py-24 px-6 bg-white/2 border-y border-white/6">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-14 scroll-reveal">
-            <h2 className="text-3xl md:text-4xl font-black mb-3">Start free. Upgrade when ready.</h2>
-            <p className="text-slate-400">No tricks. Cancel anytime.</p>
+            <h2 className="text-3xl md:text-4xl font-black mb-3">{t('landing_pricing.headline')}</h2>
+            <p className="text-slate-400">{t('landing_pricing.subtitle')}</p>
           </div>
-
           <div className="grid md:grid-cols-2 gap-6 scroll-reveal-stagger">
             {/* Free */}
             <div className="bg-[#0d1421] border border-white/10 rounded-2xl p-8">
-              <div className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-4">Free</div>
+              <div className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-4">{t('landing_pricing.free_label')}</div>
               <div className="text-5xl font-black text-white mb-1">€0</div>
-              <div className="text-slate-500 text-sm mb-8">Forever free</div>
+              <div className="text-slate-500 text-sm mb-8">{t('landing_pricing.free_tagline')}</div>
               <ul className="space-y-3 mb-8">
-                {['Quiz & path matching', '1 guide/month (weeks 1–2)', 'AI coach (limited messages)', 'Week-by-week daily plans'].map(f => (
-                  <li key={f} className="flex items-center gap-3 text-slate-300 text-sm">
-                    <span className="text-emerald-400 font-bold">✓</span> {f}
+                {(['free_f1','free_f2','free_f3','free_f4'] as const).map(k => (
+                  <li key={k} className="flex items-center gap-3 text-slate-300 text-sm">
+                    <span className="text-emerald-400 font-bold">✓</span> {t(`landing_pricing.${k}`)}
                   </li>
                 ))}
               </ul>
-              <Link
-                href="/signup"
-                className="block text-center bg-white/8 hover:bg-white/12 border border-white/10 text-white font-bold py-3 rounded-xl transition-all text-sm"
-              >
-                Get Started Free
+              <Link href="/signup" className="block text-center bg-white/8 hover:bg-white/12 border border-white/10 text-white font-bold py-3 rounded-xl transition-all text-sm">
+                {t('landing_pricing.free_cta')}
               </Link>
             </div>
-
             {/* Pro */}
             <div className="relative bg-gradient-to-b from-emerald-500/15 to-cyan-500/5 border border-emerald-500/40 rounded-2xl p-8">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-emerald-500 text-white text-xs font-black px-4 py-1 rounded-full uppercase tracking-wide">
-                Most Popular
+                {t('landing_pricing.pro_badge')}
               </div>
-              <div className="text-emerald-400 text-xs font-bold uppercase tracking-widest mb-4">Pro</div>
-              <div className="text-5xl font-black text-white mb-1">€12</div>
-              <div className="text-slate-500 text-sm mb-8">per month, cancel anytime</div>
+              <div className="text-emerald-400 text-xs font-bold uppercase tracking-widest mb-4">{t('landing_pricing.pro_label')}</div>
+              <div className="text-5xl font-black text-white mb-1">{t('landing_pricing.pro_price_monthly')}</div>
+              <div className="text-slate-500 text-sm mb-8">{t('landing_pricing.pro_tagline_monthly')}</div>
               <ul className="space-y-3 mb-8">
-                {[
-                  'Everything in Free',
-                  'Up to 3 guides/month',
-                  'All 12 weeks per guide',
-                  'Unlimited AI coach messages',
-                  'Progress-adapted weekly plans',
-                ].map(f => (
-                  <li key={f} className="flex items-center gap-3 text-slate-200 text-sm">
-                    <span className="text-emerald-400 font-bold">✓</span> {f}
+                {(['pro_f1','pro_f2','pro_f3','pro_f4','pro_f5'] as const).map(k => (
+                  <li key={k} className="flex items-center gap-3 text-slate-200 text-sm">
+                    <span className="text-emerald-400 font-bold">✓</span> {t(`landing_pricing.${k}`)}
                   </li>
                 ))}
               </ul>
-              <Link
-                href="/signup"
-                className="block text-center bg-emerald-500 hover:bg-emerald-400 text-white font-bold py-3 rounded-xl transition-all text-sm shadow-lg shadow-emerald-500/25"
-              >
-                Go Pro →
+              <Link href="/signup" className="block text-center bg-emerald-500 hover:bg-emerald-400 text-white font-bold py-3 rounded-xl transition-all text-sm shadow-lg shadow-emerald-500/25">
+                {t('landing_pricing.pro_cta')}
               </Link>
             </div>
           </div>
-
-          <p className="text-center text-slate-600 text-sm mt-6">Cancel anytime. No questions asked.</p>
         </div>
       </section>
 
@@ -497,10 +417,12 @@ export default function LandingClient() {
       <section className="py-24 px-6">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-14 scroll-reveal">
-            <h2 className="text-3xl font-black mb-3">Common questions</h2>
+            <h2 className="text-3xl font-black mb-3">{t('faq.headline')}</h2>
           </div>
           <div className="space-y-3 scroll-reveal">
-            {FAQS.map(f => <FAQItem key={f.q} q={f.q} a={f.a} />)}
+            {(['q1','q2','q3','q4','q5'] as const).map(k => (
+              <FAQItem key={k} q={t(`faq.${k}`)} a={t(`faq.${k.replace('q','a')}`)} />
+            ))}
           </div>
         </div>
       </section>
@@ -509,23 +431,11 @@ export default function LandingClient() {
       <section className="py-24 px-6 text-center relative overflow-hidden">
         <div className="absolute inset-0 bg-emerald-500/6 blur-3xl" />
         <div className="relative max-w-2xl mx-auto scroll-reveal">
-          <h2 className="text-4xl md:text-5xl font-black mb-4">
-            Stop waiting.<br />
-            <span className="text-emerald-400">Start with a real plan.</span>
-          </h2>
-          <p className="text-slate-400 text-lg mb-2">
-            Answer 8 questions and get a personalized week-by-week roadmap to your first income online — free, in 2 minutes.
-          </p>
-          <p className="text-slate-500 text-sm mb-8">
-            Your first week&apos;s tasks will be waiting for you the moment you sign up.
-          </p>
-          <Link
-            href="/signup"
-            className="inline-block bg-emerald-500 hover:bg-emerald-400 text-white font-black px-10 py-5 rounded-2xl text-lg transition-all shadow-2xl shadow-emerald-500/30"
-          >
-            Get My Free Roadmap →
+          <h2 className="text-4xl md:text-5xl font-black mb-4">{t('final_cta.headline')}</h2>
+          <p className="text-slate-400 text-lg mb-8">{t('final_cta.subtitle')}</p>
+          <Link href="/signup" className="inline-block bg-emerald-500 hover:bg-emerald-400 text-white font-black px-10 py-5 rounded-2xl text-lg transition-all shadow-2xl shadow-emerald-500/30">
+            {t('final_cta.cta')}
           </Link>
-          <p className="text-slate-600 text-sm mt-4">No credit card. No spam. Takes 2 minutes.</p>
         </div>
       </section>
 
