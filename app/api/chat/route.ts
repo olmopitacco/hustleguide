@@ -28,6 +28,13 @@ export async function POST(request: Request) {
     const guideContent = guideRes.data?.content as { weeks?: GuideWeek[] } | null
     const currentWeek = guideContent?.weeks?.find(w => w.week_number === currentWeekNumber)
 
+    const langNames: Record<string, string> = {
+      en: 'English', it: 'Italian', es: 'Spanish', fr: 'French',
+      de: 'German', pt: 'Portuguese', nl: 'Dutch', pl: 'Polish',
+    }
+    const lang = typeof profile.preferred_language === 'string' ? profile.preferred_language : 'en'
+    const langName = langNames[lang] ?? 'English'
+
     const systemPrompt = `You are a business coach helping someone build income through ${pathName}.
 
 Their profile:
@@ -39,6 +46,8 @@ Their profile:
 
 Current week: Week ${currentWeekNumber}${currentWeek ? ` — "${currentWeek.theme}"` : ''}
 ${currentWeek ? `Week goal: ${currentWeek.goal}` : ''}
+
+IMPORTANT: Respond in ${langName}. Always reply in ${langName} regardless of the language the user writes in.
 
 Answer concisely in 3-5 sentences. Be honest, practical, and encouraging. Give specific actionable advice tailored to their exact situation. No generic platitudes.`
 

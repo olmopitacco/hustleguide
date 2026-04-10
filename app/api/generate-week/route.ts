@@ -35,6 +35,11 @@ const WEEK_JSON_SHAPE = `{
   "completion_criteria": []
 }`
 
+const LANGUAGE_NAMES: Record<string, string> = {
+  en: 'English', it: 'Italian', es: 'Spanish', fr: 'French',
+  de: 'German', pt: 'Portuguese', nl: 'Dutch', pl: 'Polish',
+}
+
 function buildNextWeekPrompt(
   pathName: string,
   profile: Record<string, unknown>,
@@ -43,13 +48,16 @@ function buildNextWeekPrompt(
 ): string {
   const skills = Array.isArray(profile.skills) ? profile.skills.join(', ') : 'None listed'
   const nextWeek = completedWeekNumber + 1
+  const lang = typeof profile.preferred_language === 'string' ? profile.preferred_language : 'en'
+  const langName = LANGUAGE_NAMES[lang] ?? 'English'
+  const location = profile.location ?? 'Not specified'
 
   return `You are an expert business coach.
 
 The user is on a ${pathName} journey.
 
 Their profile:
-- Location: ${profile.location ?? 'Not specified'}
+- Location: ${location}
 - Hours per week: ${profile.hours_available ?? 'Not specified'}
 - Budget: ${profile.budget ?? 'Not specified'}
 - Skills: ${skills}
@@ -66,6 +74,12 @@ If they struggled — simplify tasks and directly address their concerns.
 If they're ahead — push further and introduce more ambitious actions.
 
 Start with a "based_on_your_progress" field: 2 sentences explaining exactly how you customized this week specifically for them based on what they told you.
+
+IMPORTANT LANGUAGE & LOCALISATION RULES:
+- Generate ALL content in ${langName}.
+- Reference platforms, tools, income figures, and examples relevant to the user's location (${location}).
+- Use local currency and realistic local income figures where applicable.
+- Keep platform names, tool names, and brand names in their original form.
 
 Include 4-5 detailed tasks. Each task must have concrete step-by-step instructions and a real example script or template where applicable.
 

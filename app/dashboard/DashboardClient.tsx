@@ -42,11 +42,12 @@ type Props = {
   upgradedParam: boolean
 }
 
-const NAV_ITEMS = [
-  { label: 'My Guide', icon: '▣', href: null, section: 'guide' },
-  { label: 'My Matches', icon: '◎', href: null, section: 'matches' },
-  { label: 'Progress', icon: '↗', href: null, section: 'progress' },
-  { label: 'Settings', icon: '◌', href: null, section: 'settings' },
+// NAV_ITEMS labels are set dynamically via t() in the component
+const NAV_SECTIONS = [
+  { icon: '▣', section: 'guide',    tKey: 'dashboard.tab_guide' },
+  { icon: '◎', section: 'matches',  tKey: 'dashboard.tab_matches' },
+  { icon: '↗', section: 'progress', tKey: 'dashboard.tab_progress' },
+  { icon: '◌', section: 'settings', tKey: 'dashboard.tab_settings' },
 ]
 
 const MOTIVATIONAL = [
@@ -216,7 +217,7 @@ export default function DashboardClient({
         </Link>
 
         <nav className="flex-1 space-y-1">
-          {NAV_ITEMS.map(item => (
+          {NAV_SECTIONS.map(item => (
             <button
               key={item.section}
               onClick={() => setSection(item.section)}
@@ -227,7 +228,7 @@ export default function DashboardClient({
               }`}
             >
               <span>{item.icon}</span>
-              {item.label}
+              {t(item.tKey)}
             </button>
           ))}
         </nav>
@@ -238,7 +239,7 @@ export default function DashboardClient({
               onClick={() => setShowUpgrade(true)}
               className="w-full bg-gradient-to-r from-emerald-500/20 to-teal-500/20 hover:from-emerald-500/30 hover:to-teal-500/30 border border-emerald-500/30 text-emerald-300 text-sm font-bold px-3 py-2.5 rounded-xl transition-all text-left flex items-center gap-2"
             >
-              <span>⚡</span> Upgrade to Pro
+              <span>⚡</span> {t('settings.upgrade_btn')}
             </button>
           )}
           {isPro && (
@@ -263,7 +264,7 @@ export default function DashboardClient({
         {upgradedParam && (
           <div className="bg-green-500/20 border border-green-500/30 text-green-300 rounded-xl px-5 py-3 mb-6 flex items-center gap-3">
             <span>🎉</span>
-            <span className="font-medium">Welcome to Pro! You now have unlimited access.</span>
+            <span className="font-medium">{t('dashboard.upgraded_title')} {t('dashboard.upgraded_msg')}</span>
           </div>
         )}
 
@@ -271,17 +272,17 @@ export default function DashboardClient({
         {section === 'guide' && (
           <div className="space-y-6">
             <div>
-              <h1 className="text-3xl font-black text-white mb-1">Hey, {userName.split(' ')[0]}!</h1>
+              <h1 className="text-3xl font-black text-white mb-1">{t('dashboard.welcome', { name: userName.split(' ')[0] })}</h1>
               <p className="text-slate-400 text-sm italic">{motivational}</p>
             </div>
 
             {/* Stats row */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {[
-                { label: 'Guides', value: `${guides.length}/${guideLimit}`, icon: '▣', sub: isPro ? 'Pro limit' : 'Free limit' },
-                { label: 'Weeks Done', value: totalWeeksCompleted, icon: '✓', sub: 'check-ins submitted' },
-                { label: 'Check-Ins', value: totalCheckIns, icon: '↺', sub: 'total reflections' },
-                { label: 'Completion', value: guides.length > 0 ? `${Math.round((totalWeeksCompleted / (guides.length * 12)) * 100)}%` : '—', icon: '◎', sub: 'towards 12 weeks' },
+                { label: t('dashboard.active_guide'), value: `${guides.length}/${guideLimit}`, icon: '▣', sub: isPro ? t('dashboard.pro_badge') : t('dashboard.free_badge') },
+                { label: t('dashboard.tab_progress'), value: totalWeeksCompleted, icon: '✓', sub: t('dashboard.weeks_completed') },
+                { label: t('dashboard.check_ins'), value: totalCheckIns, icon: '↺', sub: t('dashboard.check_ins') },
+                { label: '%', value: guides.length > 0 ? `${Math.round((totalWeeksCompleted / (guides.length * 12)) * 100)}%` : '—', icon: '◎', sub: '12 wks' },
               ].map(s => (
                 <div key={s.label} className="bg-white/5 border border-white/10 rounded-xl p-4 text-center">
                   <div className="text-xl mb-1">{s.icon}</div>
@@ -311,7 +312,7 @@ export default function DashboardClient({
               <div className="bg-gradient-to-r from-emerald-500/15 to-teal-500/10 border border-emerald-500/30 rounded-2xl p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div>
-                    <div className="text-xs text-emerald-400 font-bold uppercase tracking-wider mb-1">Active Guide</div>
+                    <div className="text-xs text-emerald-400 font-bold uppercase tracking-wider mb-1">{t('dashboard.active_guide')}</div>
                     <h2 className="text-xl font-black text-white">{activeGuide.path_name}</h2>
                     <p className="text-slate-400 text-sm mt-1">
                       Week {activeGuide.weeks_unlocked} of 12 in progress
@@ -355,15 +356,15 @@ export default function DashboardClient({
             ) : (
               <div className="bg-white/5 border border-white/10 rounded-2xl p-8 text-center">
                 <div className="flex justify-center mb-3"><svg className="w-10 h-10 text-emerald-400/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
-                <h2 className="text-xl font-bold text-white mb-2">No guide yet</h2>
+                <h2 className="text-xl font-bold text-white mb-2">{t('dashboard.no_guide')}</h2>
                 <p className="text-slate-400 text-sm mb-5">
-                  Take the questionnaire to get your personalized hustle roadmap.
+                  {t('dashboard.start_guide')}
                 </p>
                 <Link
                   href="/onboarding"
                   className="inline-block bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-white font-bold px-6 py-2.5 rounded-xl transition-all text-sm"
                 >
-                  Start Questionnaire →
+                  {t('dashboard.start_guide')} →
                 </Link>
               </div>
             )}
@@ -373,7 +374,7 @@ export default function DashboardClient({
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-3">
-                    <h3 className="text-white font-bold">All Guides</h3>
+                    <h3 className="text-white font-bold">{t('dashboard.active_guide')}</h3>
                     <button
                       onClick={toggleSelectAll}
                       className="text-xs text-slate-500 hover:text-slate-300 transition-colors"
@@ -440,7 +441,7 @@ export default function DashboardClient({
             {/* Recent Activity */}
             {recentActivity.length > 0 && (
               <div>
-                <h3 className="text-white font-bold mb-3">Recent Activity</h3>
+                <h3 className="text-white font-bold mb-3">{t('dashboard.recent_activity')}</h3>
                 <div className="space-y-2">
                   {recentActivity.map(a => (
                     <div key={a.id} className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-3">
@@ -481,8 +482,8 @@ export default function DashboardClient({
         {section === 'matches' && (
           <div className="space-y-6">
             <div>
-              <h1 className="text-3xl font-black text-white mb-1">Your Matches</h1>
-              <p className="text-slate-400 text-sm">Other hustle paths that fit your profile.</p>
+              <h1 className="text-3xl font-black text-white mb-1">{t('dashboard.tab_matches')}</h1>
+              <p className="text-slate-400 text-sm">{t('dashboard.other_paths_sub')}</p>
             </div>
 
             {otherPaths.length > 0 ? (
@@ -521,8 +522,8 @@ export default function DashboardClient({
         {section === 'progress' && (
           <div className="space-y-6">
             <div>
-              <h1 className="text-3xl font-black text-white mb-1">Progress</h1>
-              <p className="text-slate-400 text-sm">Your hustle journey so far.</p>
+              <h1 className="text-3xl font-black text-white mb-1">{t('dashboard.tab_progress')}</h1>
+              <p className="text-slate-400 text-sm">{t('dashboard.weeks_completed')}</p>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -568,13 +569,13 @@ export default function DashboardClient({
         {section === 'settings' && (
           <div className="space-y-6">
             <div>
-              <h1 className="text-3xl font-black text-white mb-1">Settings</h1>
-              <p className="text-slate-400 text-sm">Manage your account and subscription.</p>
+              <h1 className="text-3xl font-black text-white mb-1">{t('settings.headline')}</h1>
+              <p className="text-slate-400 text-sm">{t('settings.plan_section')}</p>
             </div>
 
             {/* Subscription status */}
             <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-              <h3 className="text-white font-bold mb-4">Subscription</h3>
+              <h3 className="text-white font-bold mb-4">{t('settings.plan_section')}</h3>
               <div className="flex items-center justify-between">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
@@ -587,9 +588,7 @@ export default function DashboardClient({
                     </span>
                   </div>
                   <p className="text-slate-500 text-xs">
-                    {isPro
-                      ? 'Up to 3 guides/month · all 12 weeks · unlimited AI coach'
-                      : '1 guide/month · weeks 1–2 only · limited AI coach'}
+                    {isPro ? t('settings.plan_pro_desc') : t('settings.plan_free_desc')}
                   </p>
                 </div>
                 {!isPro && (
@@ -612,7 +611,7 @@ export default function DashboardClient({
                       disabled={cancelLoading}
                       className="text-red-400 hover:text-red-300 text-sm transition-colors disabled:opacity-50"
                     >
-                      {cancelLoading ? 'Cancelling...' : 'Cancel subscription'}
+                      {cancelLoading ? t('settings.cancelling') : t('settings.cancel_btn')}
                     </button>
                   )}
                 </div>
@@ -621,7 +620,7 @@ export default function DashboardClient({
 
             {/* Your Path Matching */}
             <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-              <h3 className="text-white font-bold mb-4">Your Path Matching</h3>
+              <h3 className="text-white font-bold mb-4">{t('settings.quiz_section')}</h3>
               {otherPaths.length > 0 ? (
                 <div className="space-y-3 mb-5">
                   {otherPaths.slice(0, 3).map(p => (
@@ -649,7 +648,7 @@ export default function DashboardClient({
                 onClick={() => setShowRetakeConfirm(true)}
                 className="text-sm font-semibold text-emerald-400 hover:text-emerald-300 border border-emerald-500/30 hover:border-emerald-500/60 px-4 py-2 rounded-xl transition-all"
               >
-                Retake Quiz
+                {t('settings.retake_quiz')}
               </button>
             </div>
 
@@ -692,13 +691,13 @@ export default function DashboardClient({
 
             {/* Delete Account */}
             <div className="bg-red-950/20 border border-red-900/30 rounded-2xl p-6">
-              <h3 className="text-white font-bold mb-2">Danger Zone</h3>
-              <p className="text-slate-500 text-sm mb-4">Permanently delete your account and all data.</p>
+              <h3 className="text-white font-bold mb-2">{t('settings.danger_section')}</h3>
+              <p className="text-slate-500 text-sm mb-4">{t('settings.delete_desc')}</p>
               <button
                 onClick={() => { setShowDeleteAccount(true); setDeleteConfirmText('') }}
                 className="text-red-400 hover:text-red-300 border border-red-700/40 hover:border-red-600/60 text-sm font-semibold px-4 py-2 rounded-xl transition-all"
               >
-                Delete my account
+                {t('settings.delete_account')}
               </button>
             </div>
 
@@ -713,7 +712,7 @@ export default function DashboardClient({
 
       {/* Mobile bottom tab bar */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#070d1a] border-t border-white/10 flex">
-        {NAV_ITEMS.map(item => (
+        {NAV_SECTIONS.map(item => (
           <button
             key={item.section}
             onClick={() => setSection(item.section)}
@@ -722,7 +721,7 @@ export default function DashboardClient({
             }`}
           >
             <span className="text-base leading-none">{item.icon}</span>
-            <span>{item.label}</span>
+            <span>{t(item.tKey)}</span>
           </button>
         ))}
       </nav>
