@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useTranslation } from 'react-i18next'
 import { createClient } from '@/lib/supabase/client'
 import UpgradeModal from '@/app/components/UpgradeModal'
 import type { GuideContent, GuideWeek, DetailedTask, ChatMessage } from '@/lib/guideTypes'
@@ -22,22 +23,23 @@ type Props = {
 
 // ─── Loading Screen ───────────────────────────────────────────────────────────
 
-const STEPS = [
-  { at: 0,  label: 'Analysing your profile…' },
-  { at: 5,  label: 'Planning your first week…' },
-  { at: 15, label: 'Writing your daily breakdown…' },
-  { at: 25, label: 'Building step-by-step tasks…' },
-  { at: 35, label: 'Adding scripts & templates…' },
-  { at: 45, label: 'Finding the right tools…' },
-  { at: 55, label: 'Writing insider tips…' },
-  { at: 65, label: 'Adding common mistakes…' },
-  { at: 75, label: 'Setting completion criteria…' },
+const STEP_KEYS = [
+  { at: 0,  key: 'step_0' },
+  { at: 5,  key: 'step_1' },
+  { at: 15, key: 'step_2' },
+  { at: 25, key: 'step_3' },
+  { at: 35, key: 'step_4' },
+  { at: 45, key: 'step_5' },
+  { at: 55, key: 'step_6' },
+  { at: 65, key: 'step_7' },
+  { at: 75, key: 'step_8' },
 ]
 
 function LoadingScreen({ pathName, elapsed, label }: { pathName: string; elapsed: number; label?: string }) {
+  const { t } = useTranslation('common')
   const pct = Math.min(95, Math.round((elapsed / 45) * 95))
-  const step = [...STEPS].reverse().find(s => elapsed >= s.at) ?? STEPS[0]
-  const displayLabel = label ?? step.label
+  const step = [...STEP_KEYS].reverse().find(s => elapsed >= s.at) ?? STEP_KEYS[0]
+  const displayLabel = label ?? t(`guide.${step.key}`)
 
   return (
     <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center px-6">
@@ -51,10 +53,10 @@ function LoadingScreen({ pathName, elapsed, label }: { pathName: string; elapsed
       </div>
 
       <h2 className="text-2xl font-bold text-white mb-2 text-center">
-        Building your <span className="text-emerald-400">{pathName}</span> Week 1
+        {t('guide.loading_title', { path: pathName })}
       </h2>
       <p className="text-gray-500 text-sm mb-10 text-center max-w-xs">
-        Personalised tasks, scripts, and tools — takes about 20–30 seconds.
+        {t('guide.loading_subtitle')}
       </p>
 
       <div className="w-full max-w-sm mb-3">
@@ -71,7 +73,7 @@ function LoadingScreen({ pathName, elapsed, label }: { pathName: string; elapsed
       </div>
 
       <div className="w-full max-w-sm space-y-2">
-        {STEPS.slice(0, -1).map((s, i) => {
+        {STEP_KEYS.slice(0, -1).map((s, i) => {
           const done = elapsed > s.at + 8
           const active = step.at === s.at && !done
           return (
@@ -84,7 +86,7 @@ function LoadingScreen({ pathName, elapsed, label }: { pathName: string; elapsed
                 {done && <span className="text-emerald-600 text-xs leading-none">✓</span>}
                 {active && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse block" />}
               </div>
-              {s.label}
+              {t(`guide.${s.key}`)}
             </div>
           )
         })}
@@ -96,18 +98,19 @@ function LoadingScreen({ pathName, elapsed, label }: { pathName: string; elapsed
 // ─── Error Screen ─────────────────────────────────────────────────────────────
 
 function ErrorScreen({ error, onRetry }: { error: string; onRetry: () => void }) {
+  const { t } = useTranslation('common')
   return (
     <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center gap-5 px-6 text-center">
       <div className="w-14 h-14 rounded-full bg-red-950/60 border border-red-900/60 flex items-center justify-center text-2xl">⚠️</div>
       <div>
-        <h2 className="text-lg font-bold text-white mb-2">Something went wrong</h2>
+        <h2 className="text-lg font-bold text-white mb-2">{t('guide.error_title')}</h2>
         <p className="text-red-400 text-sm max-w-sm">{error}</p>
       </div>
       <button
         onClick={onRetry}
         className="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2.5 rounded-lg font-semibold text-sm transition-colors"
       >
-        Try Again
+        {t('guide.try_again')}
       </button>
     </div>
   )
@@ -116,6 +119,7 @@ function ErrorScreen({ error, onRetry }: { error: string; onRetry: () => void })
 // ─── Task Drawer ──────────────────────────────────────────────────────────────
 
 function TaskDrawer({ task, onClose }: { task: DetailedTask; onClose: () => void }) {
+  const { t } = useTranslation('common')
   return (
     <>
       <div className="fixed inset-0 bg-black/60 z-40" onClick={onClose} />
@@ -127,7 +131,7 @@ function TaskDrawer({ task, onClose }: { task: DetailedTask; onClose: () => void
 
         <div className="flex-1 overflow-y-auto p-5 space-y-6">
           <div>
-            <h4 className="text-emerald-400 font-semibold text-xs uppercase tracking-wider mb-3">Step-by-step</h4>
+            <h4 className="text-emerald-400 font-semibold text-xs uppercase tracking-wider mb-3">{t('guide.drawer_step_by_step')}</h4>
             <ol className="space-y-2.5">
               {task.steps.map((step, i) => (
                 <li key={i} className="flex gap-3 text-sm text-gray-300 leading-relaxed">
@@ -139,13 +143,13 @@ function TaskDrawer({ task, onClose }: { task: DetailedTask; onClose: () => void
           </div>
 
           <div className="bg-gray-800/60 rounded-xl p-4">
-            <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Tool</p>
+            <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">{t('guide.drawer_tool')}</p>
             <p className="text-sm font-semibold text-white">{task.tool}</p>
           </div>
 
           {task.example_script && (
             <div>
-              <h4 className="text-emerald-400 font-semibold text-xs uppercase tracking-wider mb-3">Example Script / Template</h4>
+              <h4 className="text-emerald-400 font-semibold text-xs uppercase tracking-wider mb-3">{t('guide.drawer_example_script')}</h4>
               <pre className="text-sm text-gray-300 bg-gray-800/60 rounded-xl p-4 whitespace-pre-wrap font-mono leading-relaxed text-xs">
                 {task.example_script}
               </pre>
@@ -153,16 +157,16 @@ function TaskDrawer({ task, onClose }: { task: DetailedTask; onClose: () => void
           )}
 
           <div className="bg-emerald-950/40 border border-emerald-900/40 rounded-xl p-4">
-            <h4 className="text-emerald-400 font-semibold text-xs uppercase tracking-wider mb-2">What good looks like</h4>
+            <h4 className="text-emerald-400 font-semibold text-xs uppercase tracking-wider mb-2">{t('guide.drawer_what_good')}</h4>
             <p className="text-sm text-gray-300 leading-relaxed">{task.what_good_looks_like}</p>
           </div>
 
           <div className="bg-amber-950/30 border border-amber-900/40 rounded-xl p-4">
-            <h4 className="text-amber-400 font-semibold text-xs uppercase tracking-wider mb-2">If it doesn&apos;t work</h4>
+            <h4 className="text-amber-400 font-semibold text-xs uppercase tracking-wider mb-2">{t('guide.drawer_if_not_work')}</h4>
             <p className="text-sm text-gray-300 leading-relaxed">{task.if_it_doesnt_work}</p>
           </div>
 
-          <p className="text-xs text-gray-600">Time estimate: {task.time_estimate}</p>
+          <p className="text-xs text-gray-600">{t('guide.drawer_time_estimate')} {task.time_estimate}</p>
         </div>
       </div>
     </>
@@ -185,6 +189,7 @@ function CheckinModal({
   weekNumber: number; pathName: string; guideId: string
   onClose: () => void; onSuccess: (newWeek: GuideWeek) => void
 }) {
+  const { t } = useTranslation('common')
   const [form, setForm] = useState<CheckinFormState>({
     accomplished: '', harder_than_expected: '', wins: '', concerns: '', actual_hours: '',
   })
@@ -197,7 +202,7 @@ function CheckinModal({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!form.accomplished.trim() || !form.harder_than_expected.trim()) {
-      setError('Please fill in the required fields.')
+      setError(t('guide.checkin_required_error'))
       return
     }
     setSubmitting(true)
@@ -231,48 +236,48 @@ function CheckinModal({
                 <circle className="opacity-20" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
                 <path className="opacity-80" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
               </svg>
-              <p className="text-white font-semibold">Personalising your Week {weekNumber + 1}…</p>
-              <p className="text-gray-500 text-sm">Based on your progress, takes ~20 seconds</p>
+              <p className="text-white font-semibold">{t('guide.checkin_personalising', { n: weekNumber + 1 })}</p>
+              <p className="text-gray-500 text-sm">{t('guide.checkin_personalising_sub')}</p>
             </div>
           ) : (
             <>
               <div className="p-6 border-b border-gray-800">
-                <h3 className="text-xl font-bold text-white">Week {weekNumber} done — how did it go?</h3>
-                <p className="text-gray-500 text-sm mt-1">Your answers shape your personalised Week {weekNumber + 1}</p>
+                <h3 className="text-xl font-bold text-white">{t('guide.checkin_title', { n: weekNumber })}</h3>
+                <p className="text-gray-500 text-sm mt-1">{t('guide.checkin_subtitle', { n: weekNumber + 1 })}</p>
               </div>
               <form onSubmit={handleSubmit} className="p-6 space-y-4">
                 <div>
                   <label className="text-sm font-medium text-gray-300 block mb-1.5">
-                    What did you actually get done? <span className="text-red-400">*</span>
+                    {t('guide.checkin_accomplished_label')} <span className="text-red-400">*</span>
                   </label>
                   <textarea value={form.accomplished} onChange={set('accomplished')} rows={3}
                     className="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-sm text-gray-200 resize-none focus:outline-none focus:border-emerald-500"
-                    placeholder="Be specific — what exactly did you complete?" />
+                    placeholder={t('guide.checkin_accomplished_ph')} />
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-300 block mb-1.5">
-                    What was harder than expected? <span className="text-red-400">*</span>
+                    {t('guide.checkin_harder_label')} <span className="text-red-400">*</span>
                   </label>
                   <textarea value={form.harder_than_expected} onChange={set('harder_than_expected')} rows={2}
                     className="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-sm text-gray-200 resize-none focus:outline-none focus:border-emerald-500"
-                    placeholder="What got you stuck or took longer?" />
+                    placeholder={t('guide.checkin_harder_ph')} />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-sm font-medium text-gray-300 block mb-1.5">Any wins?</label>
+                    <label className="text-sm font-medium text-gray-300 block mb-1.5">{t('guide.checkin_wins_label')}</label>
                     <textarea value={form.wins} onChange={set('wins')} rows={2}
                       className="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-sm text-gray-200 resize-none focus:outline-none focus:border-emerald-500"
-                      placeholder="Highlight of the week?" />
+                      placeholder={t('guide.checkin_wins_ph')} />
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-300 block mb-1.5">What are you most unsure about?</label>
+                    <label className="text-sm font-medium text-gray-300 block mb-1.5">{t('guide.checkin_concerns_label')}</label>
                     <textarea value={form.concerns} onChange={set('concerns')} rows={2}
                       className="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-sm text-gray-200 resize-none focus:outline-none focus:border-emerald-500"
-                      placeholder="Biggest worry?" />
+                      placeholder={t('guide.checkin_concerns_ph')} />
                   </div>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-300 block mb-1.5">Hours actually spent</label>
+                  <label className="text-sm font-medium text-gray-300 block mb-1.5">{t('guide.checkin_hours_label')}</label>
                   <input type="number" value={form.actual_hours} onChange={set('actual_hours')} min="0" step="0.5"
                     className="w-32 bg-gray-800 border border-gray-700 rounded-xl p-3 text-sm text-gray-200 focus:outline-none focus:border-emerald-500"
                     placeholder="e.g. 8" />
@@ -283,11 +288,11 @@ function CheckinModal({
                 <div className="flex gap-3 pt-1">
                   <button type="button" onClick={onClose}
                     className="flex-1 py-3 rounded-xl border border-gray-700 text-gray-400 hover:text-white hover:border-gray-500 transition-colors text-sm font-medium">
-                    Cancel
+                    {t('common.cancel')}
                   </button>
                   <button type="submit"
                     className="flex-1 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition-colors text-sm">
-                    Generate Week {weekNumber + 1} →
+                    {t('guide.checkin_submit', { n: weekNumber + 1 })}
                   </button>
                 </div>
               </form>
@@ -306,6 +311,7 @@ function DeleteConfirmModal({
 }: {
   pathName: string; onConfirm: () => void; onCancel: () => void; deleting: boolean
 }) {
+  const { t } = useTranslation('common')
   return (
     <>
       <div className="fixed inset-0 bg-black/70 z-50" onClick={onCancel} />
@@ -313,14 +319,13 @@ function DeleteConfirmModal({
         <div className="bg-gray-900 border border-red-900/50 rounded-2xl w-full max-w-sm p-6 shadow-2xl pointer-events-auto">
           <div className="text-center mb-5">
             <div className="w-12 h-12 rounded-full bg-red-950/60 border border-red-900/60 flex items-center justify-center mx-auto mb-3"><svg className="w-5 h-5 text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></div>
-            <h3 className="text-lg font-bold text-white mb-2">Delete this guide?</h3>
+            <h3 className="text-lg font-bold text-white mb-2">{t('guide.delete_title')}</h3>
             <p className="text-gray-400 text-sm leading-relaxed">
-              You&apos;re about to delete your <span className="text-white font-semibold">{pathName}</span> guide.
-              All weekly progress, check-ins, and plans will be permanently lost.
+              {t('guide.delete_desc', { path: pathName })}
             </p>
           </div>
           <div className="bg-red-950/30 border border-red-900/40 rounded-xl p-3 mb-5">
-            <p className="text-red-400 text-xs text-center font-medium">This action cannot be undone.</p>
+            <p className="text-red-400 text-xs text-center font-medium">{t('guide.delete_warning')}</p>
           </div>
           <div className="flex gap-3">
             <button
@@ -328,14 +333,14 @@ function DeleteConfirmModal({
               disabled={deleting}
               className="flex-1 py-2.5 rounded-xl border border-gray-700 text-gray-400 hover:text-white hover:border-gray-500 transition-colors text-sm font-medium"
             >
-              Keep Guide
+              {t('guide.delete_keep')}
             </button>
             <button
               onClick={onConfirm}
               disabled={deleting}
               className="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 disabled:opacity-50 text-white font-semibold transition-colors text-sm"
             >
-              {deleting ? 'Deleting…' : 'Yes, Delete'}
+              {deleting ? t('guide.deleting') : t('guide.delete_confirm')}
             </button>
           </div>
         </div>
@@ -351,6 +356,7 @@ function ChatPanel({
 }: {
   guideId: string; pathName: string; currentWeekNumber: number; onClose: () => void
 }) {
+  const { t } = useTranslation('common')
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState('')
   const [typing, setTyping] = useState(false)
@@ -374,7 +380,7 @@ function ChatPanel({
       const data = await res.json()
       setMessages(m => [...m, { role: 'assistant', content: data.reply ?? data.error ?? 'Something went wrong.' }])
     } catch {
-      setMessages(m => [...m, { role: 'assistant', content: 'Connection error. Try again.' }])
+      setMessages(m => [...m, { role: 'assistant', content: t('guide.coach_error') }])
     } finally {
       setTyping(false)
     }
@@ -384,7 +390,7 @@ function ChatPanel({
     <div className="fixed inset-0 md:inset-auto md:bottom-20 md:right-4 md:w-96 bg-gray-900 border border-gray-700 md:rounded-2xl shadow-2xl z-30 flex flex-col" style={{ maxHeight: '100dvh' }}>
       <div className="flex items-center justify-between px-4 py-3 border-b border-gray-800">
         <div>
-          <p className="font-semibold text-white text-sm">Ask your coach</p>
+          <p className="font-semibold text-white text-sm">{t('guide.coach_title')}</p>
           <p className="text-xs text-gray-500">{pathName}</p>
         </div>
         <button onClick={onClose} className="text-gray-500 hover:text-white text-xl leading-none">&times;</button>
@@ -392,7 +398,7 @@ function ChatPanel({
 
       <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0">
         {messages.length === 0 && (
-          <p className="text-xs text-gray-600 text-center pt-6">Ask anything about your plan, tasks, or strategy.</p>
+          <p className="text-xs text-gray-600 text-center pt-6">{t('guide.coach_empty')}</p>
         )}
         {messages.map((m, i) => (
           <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -416,7 +422,7 @@ function ChatPanel({
       <div className="p-3 border-t border-gray-800 flex gap-2">
         <input value={input} onChange={e => setInput(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && !e.shiftKey && send()}
-          placeholder="Ask a question…"
+          placeholder={t('guide.coach_placeholder')}
           className="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200 focus:outline-none focus:border-emerald-500" />
         <button onClick={send} disabled={typing || !input.trim()}
           className="bg-emerald-600 hover:bg-emerald-500 disabled:bg-gray-800 disabled:text-gray-600 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors">
@@ -435,6 +441,7 @@ function WeekView({
   week: GuideWeek; checkedCriteria: Set<number>
   onCriteriaToggle: (i: number) => void; onTaskClick: (task: DetailedTask) => void
 }) {
+  const { t } = useTranslation('common')
   const days = [
     { key: 'day_1' as const, label: 'Day 1' },
     { key: 'day_2_3' as const, label: 'Days 2–3' },
@@ -450,12 +457,12 @@ function WeekView({
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <span className="text-xs font-bold text-emerald-400 uppercase tracking-widest">Week {week.week_number}</span>
+        <span className="text-xs font-bold text-emerald-400 uppercase tracking-widest">{t('guide.week_label', { n: week.week_number })}</span>
         <h2 className="text-3xl font-bold text-white mt-1 mb-2">{week.theme}</h2>
         <p className="text-gray-400 leading-relaxed">{week.goal}</p>
         {week.based_on_your_progress && (
           <div className="mt-4 bg-blue-950/40 border border-blue-900/50 rounded-xl p-4">
-            <p className="text-xs font-semibold text-blue-400 uppercase tracking-wide mb-1">Personalised for your progress</p>
+            <p className="text-xs font-semibold text-blue-400 uppercase tracking-wide mb-1">{t('guide.week_personalised')}</p>
             <p className="text-sm text-gray-300 leading-relaxed">{week.based_on_your_progress}</p>
           </div>
         )}
@@ -465,8 +472,8 @@ function WeekView({
       {totalCriteria > 0 && (
         <div className="bg-gray-800/50 rounded-xl p-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Week Progress</span>
-            <span className="text-xs font-bold text-emerald-400">{tickedCount}/{totalCriteria} criteria</span>
+            <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide">{t('guide.week_progress')}</span>
+            <span className="text-xs font-bold text-emerald-400">{t('guide.week_criteria', { ticked: tickedCount, total: totalCriteria })}</span>
           </div>
           <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
             <div
@@ -475,7 +482,7 @@ function WeekView({
             />
           </div>
           {tickedCount === totalCriteria && totalCriteria > 0 && (
-            <p className="text-xs text-emerald-400 mt-2 font-medium">All done! Your check-in form will appear shortly.</p>
+            <p className="text-xs text-emerald-400 mt-2 font-medium">{t('guide.week_all_done')}</p>
           )}
         </div>
       )}
@@ -483,18 +490,18 @@ function WeekView({
       {/* Mindset + Why */}
       <div className="grid sm:grid-cols-2 gap-3">
         <div className="bg-gray-800/50 rounded-xl p-4">
-          <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">Mindset this week</p>
+          <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">{t('guide.week_mindset')}</p>
           <p className="text-sm text-gray-200 leading-relaxed">{week.mindset}</p>
         </div>
         <div className="bg-gray-800/50 rounded-xl p-4">
-          <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">Why it matters</p>
+          <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">{t('guide.week_why_matters')}</p>
           <p className="text-sm text-gray-200 leading-relaxed">{week.why_it_matters}</p>
         </div>
       </div>
 
       {/* Daily Breakdown */}
       <div>
-        <h3 className="text-base font-bold text-white mb-3">Daily Breakdown</h3>
+        <h3 className="text-base font-bold text-white mb-3">{t('guide.week_daily_breakdown')}</h3>
         <div className="grid sm:grid-cols-2 gap-3">
           {days.map(({ key, label }) => {
             const day = week.daily_breakdown[key]
@@ -521,7 +528,7 @@ function WeekView({
 
       {/* Tasks */}
       <div>
-        <h3 className="text-base font-bold text-white mb-3">Tasks — click for full detail</h3>
+        <h3 className="text-base font-bold text-white mb-3">{t('guide.week_tasks')}</h3>
         <div className="space-y-2">
           {week.detailed_tasks.map((task, i) => (
             <button key={i} onClick={() => onTaskClick(task)}
@@ -538,7 +545,7 @@ function WeekView({
                     <span className="text-xs text-gray-500">{task.tool}</span>
                   </div>
                 </div>
-                <span className="text-xs text-gray-600 shrink-0 group-hover:text-gray-400 transition-colors">Full detail →</span>
+                <span className="text-xs text-gray-600 shrink-0 group-hover:text-gray-400 transition-colors">{t('guide.week_full_detail')}</span>
               </div>
             </button>
           ))}
@@ -548,7 +555,7 @@ function WeekView({
       {/* Tools */}
       {week.tools?.length > 0 && (
         <div>
-          <h3 className="text-base font-bold text-white mb-3">Tools This Week</h3>
+          <h3 className="text-base font-bold text-white mb-3">{t('guide.week_tools')}</h3>
           <div className="grid sm:grid-cols-2 gap-3">
             {week.tools.map((tool, i) => (
               <div key={i} className="bg-gray-800/50 rounded-xl p-4">
@@ -569,7 +576,7 @@ function WeekView({
       {/* Insider Tips */}
       {week.insider_tips?.length > 0 && (
         <div className="bg-amber-950/30 border border-amber-900/50 rounded-xl p-5">
-          <h3 className="text-xs font-bold text-amber-400 uppercase tracking-wider mb-3">Insider Tips</h3>
+          <h3 className="text-xs font-bold text-amber-400 uppercase tracking-wider mb-3">{t('guide.week_insider_tips')}</h3>
           <ul className="space-y-2">
             {week.insider_tips.map((tip, i) => (
               <li key={i} className="text-sm text-gray-300 flex gap-2 leading-relaxed">
@@ -583,12 +590,12 @@ function WeekView({
       {/* Common Mistakes */}
       {week.common_mistakes?.length > 0 && (
         <div>
-          <h3 className="text-base font-bold text-white mb-3">Common Mistakes</h3>
+          <h3 className="text-base font-bold text-white mb-3">{t('guide.week_common_mistakes')}</h3>
           <div className="space-y-2">
             {week.common_mistakes.map((m, i) => (
               <div key={i} className="bg-gray-800/50 rounded-xl p-4">
                 <p className="text-sm font-semibold text-red-400 mb-1">✗ {m.mistake}</p>
-                <p className="text-xs text-gray-400 leading-relaxed">Fix: {m.how_to_avoid}</p>
+                <p className="text-xs text-gray-400 leading-relaxed">{t('guide.week_fix')} {m.how_to_avoid}</p>
               </div>
             ))}
           </div>
@@ -598,8 +605,8 @@ function WeekView({
       {/* Completion Criteria */}
       {week.completion_criteria?.length > 0 && (
         <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl p-5">
-          <h3 className="text-sm font-bold text-white uppercase tracking-wide mb-1">Week Complete When…</h3>
-          <p className="text-xs text-gray-500 mb-4">Tick all of these to unlock your Week {week.week_number + 1} check-in</p>
+          <h3 className="text-sm font-bold text-white uppercase tracking-wide mb-1">{t('guide.week_complete_when')}</h3>
+          <p className="text-xs text-gray-500 mb-4">{t('guide.week_unlock_checkin', { n: week.week_number + 1 })}</p>
           <ul className="space-y-3">
             {week.completion_criteria.map((c, i) => {
               const checked = checkedCriteria.has(i)
@@ -636,6 +643,7 @@ export default function GuideClient({
 }: Props) {
   const supabase = createClient()
   const router = useRouter()
+  const { t } = useTranslation('common')
   const isPro = subscriptionStatus === 'pro'
   const FREE_WEEK_LIMIT = 2
 
@@ -733,11 +741,11 @@ export default function GuideClient({
 
   // Coach nudge — pops up after 45s on first visit, then every 3 min
   const NUDGES = [
-    'Stuck on something? Ask your coach 💬',
-    'Need help with a task? I\'m here 👋',
-    'Not sure where to start? Ask me anything →',
-    'Your coach is online — ask anything',
-    'Questions about this week? Let\'s talk 💡',
+    t('guide.coach_title') + ' 💬',
+    t('guide.coach_empty'),
+    t('guide.coach_title') + ' →',
+    t('guide.coach_title'),
+    t('guide.coach_title') + ' 💡',
   ]
   useEffect(() => {
     if (showChat) return
@@ -847,7 +855,7 @@ export default function GuideClient({
       {/* Sidebar — hidden on mobile */}
       <aside className="hidden md:flex w-56 shrink-0 bg-gray-900 border-r border-gray-800 flex-col h-screen sticky top-0 overflow-y-auto">
         <div className="p-4 border-b border-gray-800">
-          <Link href="/dashboard" className="text-xs text-gray-600 hover:text-gray-300 flex items-center gap-1 mb-3">← Dashboard</Link>
+          <Link href="/dashboard" className="text-xs text-gray-600 hover:text-gray-300 flex items-center gap-1 mb-3">{t('guide.dashboard_link')}</Link>
           <p className="text-xs font-bold text-emerald-400 uppercase tracking-wide truncate">{pathName}</p>
           <p className="text-xs text-gray-600 mt-0.5">Hey, {userName}</p>
 
@@ -855,7 +863,7 @@ export default function GuideClient({
           {totalCriteriaAll > 0 && (
             <div className="mt-3">
               <div className="flex justify-between text-xs text-gray-600 mb-1">
-                <span>Overall</span>
+                <span>{t('guide.sidebar_overall')}</span>
                 <span>{overallPct}%</span>
               </div>
               <div className="h-1 bg-gray-800 rounded-full overflow-hidden">
@@ -871,11 +879,11 @@ export default function GuideClient({
           <div className="flex gap-3 mt-3">
             <div className="flex-1 bg-gray-800/60 rounded-lg p-2 text-center">
               <div className="text-sm font-bold text-white">{checkedInWeeks.size}</div>
-              <div className="text-xs text-gray-600">weeks done</div>
+              <div className="text-xs text-gray-600">{t('guide.sidebar_weeks_done')}</div>
             </div>
             <div className="flex-1 bg-gray-800/60 rounded-lg p-2 text-center">
               <div className="text-sm font-bold text-white">{guide.weeks.length}</div>
-              <div className="text-xs text-gray-600">generated</div>
+              <div className="text-xs text-gray-600">{t('guide.sidebar_generated')}</div>
             </div>
           </div>
         </div>
@@ -906,8 +914,8 @@ export default function GuideClient({
                 <span className="shrink-0 w-4 text-center text-xs">
                   {allCriteriaDone ? '✓' : planLocked ? '★' : !canAccess ? '·' : n}
                 </span>
-                <span className="truncate flex-1">{week ? week.theme : `Week ${n}`}</span>
-                {planLocked && <span className="text-xs text-emerald-500 shrink-0">Pro</span>}
+                <span className="truncate flex-1">{week ? week.theme : t('guide.week_label', { n })}</span>
+                {planLocked && <span className="text-xs text-emerald-500 shrink-0">{t('guide.pro_tag')}</span>}
               </button>
             )
           })}
@@ -920,14 +928,14 @@ export default function GuideClient({
               onClick={() => setShowUpgrade(true)}
               className="w-full text-xs bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 px-3 py-2 rounded-lg transition-colors font-medium"
             >
-              ↑ Unlock all weeks
+              {t('guide.sidebar_unlock')}
             </button>
           )}
           <button
             onClick={() => setShowDelete(true)}
             className="w-full text-xs text-gray-600 hover:text-red-400 hover:bg-red-950/20 px-3 py-2 rounded-lg transition-colors text-left"
           >
-            Delete this guide
+            {t('guide.sidebar_delete')}
           </button>
         </div>
       </aside>
@@ -977,12 +985,12 @@ export default function GuideClient({
       <main className="flex-1 overflow-y-auto pt-[6.5rem] md:pt-0">
         <div className="sticky top-0 hidden md:flex bg-gray-950/90 backdrop-blur border-b border-gray-800 px-6 py-3 z-10 items-center justify-between">
           <span className="text-xs text-gray-500">
-            {guide.weeks.length} week{guide.weeks.length !== 1 ? 's' : ''} generated
-            {!isPro && <span className="ml-2 text-emerald-500">· Free plan: weeks 1–{FREE_WEEK_LIMIT}</span>}
+            {t('guide.weeks_generated', { n: guide.weeks.length })}
+            {!isPro && <span className="ml-2 text-emerald-500">· {t('guide.free_plan_limit', { n: FREE_WEEK_LIMIT })}</span>}
           </span>
           {checkedInWeeks.size > 0 && (
             <span className="text-xs text-emerald-500 font-medium">
-              {checkedInWeeks.size} week{checkedInWeeks.size !== 1 ? 's' : ''} completed ✓
+              {t('guide.weeks_completed_label', { n: checkedInWeeks.size })}
             </span>
           )}
         </div>
@@ -1000,19 +1008,19 @@ export default function GuideClient({
               {isPlanLocked(activeWeek) ? (
                 <div>
                   <div className="flex justify-center mb-4"><svg className="w-10 h-10 text-emerald-400/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-                  <p className="text-white font-semibold mb-2">Week {activeWeek} is a Pro feature</p>
-                  <p className="text-gray-500 text-sm mb-5">Free plan includes weeks 1–{FREE_WEEK_LIMIT}. Upgrade to unlock all 12 weeks.</p>
+                  <p className="text-white font-semibold mb-2">{t('guide.pro_week_title', { n: activeWeek })}</p>
+                  <p className="text-gray-500 text-sm mb-5">{t('guide.pro_week_desc', { n: FREE_WEEK_LIMIT })}</p>
                   <button
                     onClick={() => setShowUpgrade(true)}
                     className="bg-gradient-to-r from-emerald-500 to-teal-400 text-white font-bold px-6 py-2.5 rounded-xl text-sm"
                   >
-                    Upgrade to Pro →
+                    {t('guide.upgrade_btn')}
                   </button>
                 </div>
               ) : (
                 <div>
                   <div className="flex justify-center mb-4"><svg className="w-10 h-10 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
-                  <p className="text-gray-500 text-sm">Complete Week {activeWeek - 1} and submit your check-in to unlock this week.</p>
+                  <p className="text-gray-500 text-sm">{t('guide.locked_week_desc', { n: activeWeek - 1 })}</p>
                 </div>
               )}
             </div>
@@ -1082,7 +1090,7 @@ export default function GuideClient({
             ? 'w-10 h-10 rounded-full bg-gray-700 hover:bg-gray-600 text-white text-lg shadow-lg flex items-center justify-center'
             : 'flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm px-4 py-3 rounded-full shadow-xl'
         }`}
-        title="Ask your coach"
+        title={t('guide.coach_title')}
       >
         {showChat ? (
           '×'
@@ -1092,7 +1100,7 @@ export default function GuideClient({
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-60"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
             </span>
-            Ask your coach
+            {t('guide.coach_title')}
           </>
         )}
       </button>

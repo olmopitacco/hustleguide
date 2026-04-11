@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslation } from 'react-i18next'
 import { createClient } from '@/lib/supabase/client'
 import type { ScoredPath } from '@/lib/hustlePaths'
 import UpgradeModal from '@/app/components/UpgradeModal'
@@ -31,6 +32,7 @@ function MatchBar({ percent }: { percent: number }) {
 
 export default function ResultsClient({ top3, rest, userId, userName, subscriptionStatus, monthlyGuideCount }: Props) {
   const router = useRouter()
+  const { t } = useTranslation('common')
   const [loading, setLoading] = useState<string | null>(null)
   const [showUpgrade, setShowUpgrade] = useState(false)
   const [confirmPath, setConfirmPath] = useState<string | null>(null)
@@ -42,12 +44,12 @@ export default function ResultsClient({ top3, rest, userId, userName, subscripti
   function confirmMessage(): string {
     const remaining = MONTHLY_LIMIT - monthlyGuideCount
     if (MONTHLY_LIMIT === 1) {
-      return `This is your only guide generation for this month. Make it count!`
+      return t('results.confirm_use')
     }
     if (remaining === 1) {
-      return `This will be your last generation this month (${monthlyGuideCount + 1}/${MONTHLY_LIMIT}). Use it wisely!`
+      return t('results.confirm_last', { n: monthlyGuideCount + 1, max: MONTHLY_LIMIT })
     }
-    return `This will be generation ${monthlyGuideCount + 1} of ${MONTHLY_LIMIT} for this month.`
+    return t('results.confirm_nth', { n: monthlyGuideCount + 1, max: MONTHLY_LIMIT })
   }
 
   async function doGenerate(pathName: string) {
@@ -84,8 +86,8 @@ export default function ResultsClient({ top3, rest, userId, userName, subscripti
         <UpgradeModal
           onClose={() => setShowUpgrade(false)}
           trigger={isPro
-            ? `You've used all ${MONTHLY_LIMIT} guide generations for this month. Your quota resets next month.`
-            : `Free plan: 1 guide generation per month. Upgrade to Pro for 3/month.`
+            ? t('results.limit_hit_pro')
+            : t('results.upgrade_prompt')
           }
         />
       )}
@@ -103,12 +105,12 @@ export default function ResultsClient({ top3, rest, userId, userName, subscripti
                   </div>
                 </div>
                 <h3 className="text-lg font-bold text-white mb-2">
-                  Generate <span className="text-emerald-400">{confirmPath}</span> guide?
+                  {t('results.confirm_title', { path: confirmPath })}
                 </h3>
                 <p className="text-slate-400 text-sm leading-relaxed">{confirmMessage()}</p>
               </div>
               <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 mb-5 flex items-center justify-between">
-                <span className="text-slate-400 text-xs">Monthly usage</span>
+                <span className="text-slate-400 text-xs">{t('results.monthly_usage')}</span>
                 <div className="flex items-center gap-2">
                   <div className="flex gap-1">
                     {Array.from({ length: MONTHLY_LIMIT }).map((_, i) => (
@@ -129,13 +131,13 @@ export default function ResultsClient({ top3, rest, userId, userName, subscripti
                   onClick={() => setConfirmPath(null)}
                   className="flex-1 py-2.5 rounded-xl border border-slate-700 text-slate-400 hover:text-white hover:border-slate-500 transition-colors text-sm font-medium"
                 >
-                  Cancel
+                  {t('results.cancel')}
                 </button>
                 <button
                   onClick={() => doGenerate(confirmPath)}
                   className="flex-1 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white font-semibold transition-all text-sm"
                 >
-                  Yes, generate it →
+                  {t('results.confirm_btn')}
                 </button>
               </div>
             </div>
@@ -156,13 +158,13 @@ export default function ResultsClient({ top3, rest, userId, userName, subscripti
               ))}
             </div>
             <span className="text-slate-400 text-sm">
-              <span className="text-white font-semibold">{monthlyGuideCount}/{MONTHLY_LIMIT}</span> guide{MONTHLY_LIMIT !== 1 ? 's' : ''} generated this month
-              {atLimit && <span className="text-red-400 ml-2 font-medium">· Limit reached</span>}
+              <span className="text-white font-semibold">{monthlyGuideCount}/{MONTHLY_LIMIT}</span> {t('results.guides_label')}
+              {atLimit && <span className="text-red-400 ml-2 font-medium">· {t('results.limit_reached')}</span>}
             </span>
           </div>
           {!isPro && (
             <button onClick={() => setShowUpgrade(true)} className="shrink-0 text-xs text-emerald-400 hover:text-emerald-300 font-medium transition-colors">
-              Upgrade for 3/month →
+              {t('results.upgrade_for_more')}
             </button>
           )}
         </div>
@@ -171,13 +173,13 @@ export default function ResultsClient({ top3, rest, userId, userName, subscripti
         <div className="mb-12">
           <div className="inline-flex items-center gap-2 bg-green-500/20 border border-green-500/30 text-green-300 text-sm font-medium px-3 py-1.5 rounded-full mb-5">
             <span className="w-2 h-2 bg-green-400 rounded-full"></span>
-            Analysis complete
+            {t('results.analysis_complete')}
           </div>
           <h1 className="text-4xl md:text-5xl font-black text-white mb-3">
-            Your top matches
+            {t('results.top_matches_headline')}
           </h1>
           <p className="text-slate-400 text-lg">
-            Hey {userName}, based on your profile we scored 40 hustle paths. Here are your best fits.
+            {t('results.top_matches_sub', { name: userName })}
           </p>
         </div>
 
@@ -195,7 +197,7 @@ export default function ResultsClient({ top3, rest, userId, userName, subscripti
               {/* Rank badge */}
               {i === 0 && (
                 <div className="absolute top-4 right-4 bg-emerald-500 text-white text-xs font-black px-3 py-1 rounded-full uppercase tracking-wide">
-                  Best Match
+                  {t('results.best_match')}
                 </div>
               )}
 
@@ -230,7 +232,7 @@ export default function ResultsClient({ top3, rest, userId, userName, subscripti
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                   <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5">
                     <div className="text-xs text-slate-500 uppercase tracking-wide font-medium mb-0.5">
-                      Realistic income
+                      {t('results.realistic_income')}
                     </div>
                     <div className="text-white font-bold text-sm">{path.incomeRange}</div>
                   </div>
@@ -250,13 +252,13 @@ export default function ResultsClient({ top3, rest, userId, userName, subscripti
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
                         </svg>
-                        Building guide...
+                        {t('results.building_guide')}
                       </>
                     ) : atLimit ? (
-                      <>↑ Upgrade for more guides</>
+                      <>{t('results.upgrade_for_guides')}</>
                     ) : (
                       <>
-                        Generate My Guide
+                        {t('results.generate_btn')}
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 16 16">
                           <path d="M6 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
@@ -271,8 +273,8 @@ export default function ResultsClient({ top3, rest, userId, userName, subscripti
 
         {/* Rest of the paths */}
         <div>
-          <h2 className="text-xl font-black text-white mb-2">All other paths</h2>
-          <p className="text-slate-500 text-sm mb-5">Explore alternatives or generate a guide for any of these too.</p>
+          <h2 className="text-xl font-black text-white mb-2">{t('results.all_other_paths')}</h2>
+          <p className="text-slate-500 text-sm mb-5">{t('results.all_other_paths_sub')}</p>
 
           <div className="bg-white/3 border border-white/8 rounded-2xl overflow-hidden divide-y divide-white/5">
             {rest.map((path) => (
@@ -300,7 +302,7 @@ export default function ResultsClient({ top3, rest, userId, userName, subscripti
                   disabled={loading !== null}
                   className="opacity-0 group-hover:opacity-100 text-emerald-400 hover:text-emerald-300 text-xs font-semibold transition-all whitespace-nowrap disabled:opacity-30"
                 >
-                  Generate →
+                  {t('results.generate_btn_short')}
                 </button>
               </div>
             ))}
