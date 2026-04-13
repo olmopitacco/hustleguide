@@ -68,13 +68,7 @@ export default function SignupPage() {
     return (
       <div className="min-h-screen bg-[#070d1a] flex items-center justify-center px-4">
         <div className="w-full max-w-md text-center">
-          <div className="flex justify-center mb-6">
-            <div className="w-16 h-16 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center">
-              <svg className="w-8 h-8 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
-              </svg>
-            </div>
-          </div>
+          <div className="text-6xl mb-6">📬</div>
           <h2 className="text-3xl font-black text-white mb-3">Check your email</h2>
           <p className="text-slate-400 mb-6">
             We sent a confirmation link to <strong className="text-white">{email}</strong>.

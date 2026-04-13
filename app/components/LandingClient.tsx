@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
-import { IconTarget, IconCalendar, IconRefresh, IconChat, IconTrendUp, IconClock, IconMap, IconBrain, IconX } from './Icons'
 import LanguageSwitcher from './LanguageSwitcher'
 
 // ─── Scroll reveal hook ───────────────────────────────────────────────────────
@@ -160,7 +159,7 @@ function GuideMockup() {
 
             {/* Chat bubble */}
             <div className="bg-emerald-600 text-white text-xs px-3 py-2 rounded-xl rounded-bl-sm inline-block">
-              Your pitch response rate is 22% — above average. Keep going.
+              Your pitch response rate is 22% — above average. Keep going! 🔥
             </div>
           </div>
         </div>
@@ -299,12 +298,12 @@ export default function LandingClient() {
           </div>
           <div className="grid md:grid-cols-3 gap-6 scroll-reveal-stagger">
             {[
-              { icon: <IconX className="w-6 h-6" />, title: t('problem.pain_1_title'), desc: t('problem.pain_1_desc') },
-              { icon: <IconMap className="w-6 h-6" />, title: t('problem.pain_2_title'), desc: t('problem.pain_2_desc') },
-              { icon: <IconClock className="w-6 h-6" />, title: t('problem.pain_3_title'), desc: t('problem.pain_3_desc') },
+              { icon: '😤', title: t('problem.pain_1_title'), desc: t('problem.pain_1_desc') },
+              { icon: '🗺️', title: t('problem.pain_2_title'), desc: t('problem.pain_2_desc') },
+              { icon: '⏳', title: t('problem.pain_3_title'), desc: t('problem.pain_3_desc') },
             ].map(p => (
               <div key={p.title} className="bg-red-950/20 border border-red-900/30 rounded-2xl p-6 text-left">
-                <div className="text-red-400/70 mb-3">{p.icon}</div>
+                <div className="text-3xl mb-3">{p.icon}</div>
                 <h3 className="text-white font-bold text-sm mb-2">{p.title}</h3>
                 <p className="text-slate-500 text-xs leading-relaxed">{p.desc}</p>
               </div>
@@ -322,13 +321,13 @@ export default function LandingClient() {
           </div>
           <div className="grid md:grid-cols-3 gap-6 scroll-reveal-stagger">
             {[
-              { n: '01', icon: <IconBrain className="w-6 h-6" />, title: t('how_it_works.step_1_title'), desc: t('how_it_works.step_1_desc') },
-              { n: '02', icon: <IconTarget className="w-6 h-6" />, title: t('how_it_works.step_2_title'), desc: t('how_it_works.step_2_desc') },
-              { n: '03', icon: <IconTrendUp className="w-6 h-6" />, title: t('how_it_works.step_3_title'), desc: t('how_it_works.step_3_desc') },
+              { n: '01', icon: '🧠', title: t('how_it_works.step_1_title'), desc: t('how_it_works.step_1_desc') },
+              { n: '02', icon: '🎯', title: t('how_it_works.step_2_title'), desc: t('how_it_works.step_2_desc') },
+              { n: '03', icon: '📈', title: t('how_it_works.step_3_title'), desc: t('how_it_works.step_3_desc') },
             ].map(s => (
               <div key={s.n} className="relative bg-[#0d1421] border border-white/8 rounded-2xl p-6">
                 <div className="text-emerald-400 font-black text-4xl font-mono mb-4 opacity-30 absolute top-5 right-5">{s.n}</div>
-                <div className="text-emerald-400 mb-3">{s.icon}</div>
+                <div className="text-3xl mb-3">{s.icon}</div>
                 <h3 className="text-white font-bold text-base mb-2">{s.title}</h3>
                 <p className="text-slate-400 text-sm leading-relaxed">{s.desc}</p>
               </div>
@@ -349,13 +348,13 @@ export default function LandingClient() {
           </div>
           <div className="grid md:grid-cols-2 gap-5 scroll-reveal-stagger">
             {[
-              { icon: <IconTarget className="w-6 h-6" />, title: t('features.f1_title'), desc: t('features.f1_desc') },
-              { icon: <IconCalendar className="w-6 h-6" />, title: t('features.f2_title'), desc: t('features.f2_desc') },
-              { icon: <IconRefresh className="w-6 h-6" />, title: t('features.f3_title'), desc: t('features.f3_desc') },
-              { icon: <IconChat className="w-6 h-6" />, title: t('features.f4_title'), desc: t('features.f4_desc') },
+              { icon: '🎯', title: t('features.f1_title'), desc: t('features.f1_desc') },
+              { icon: '📅', title: t('features.f2_title'), desc: t('features.f2_desc') },
+              { icon: '🔄', title: t('features.f3_title'), desc: t('features.f3_desc') },
+              { icon: '💬', title: t('features.f4_title'), desc: t('features.f4_desc') },
             ].map(f => (
               <div key={f.title} className="flex gap-4 bg-white/3 border border-white/8 rounded-2xl p-6 hover:border-emerald-500/30 hover:bg-emerald-500/5 transition-all">
-                <div className="text-emerald-400 shrink-0 mt-0.5">{f.icon}</div>
+                <div className="text-3xl shrink-0">{f.icon}</div>
                 <div>
                   <h3 className="text-white font-bold mb-1">{f.title}</h3>
                   <p className="text-slate-400 text-sm leading-relaxed">{f.desc}</p>
