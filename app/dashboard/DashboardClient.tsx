@@ -44,10 +44,10 @@ type Props = {
 
 // NAV_ITEMS labels are set dynamically via t() in the component
 const NAV_SECTIONS = [
-  { icon: '▣', section: 'guide',    tKey: 'dashboard.tab_guide' },
-  { icon: '◎', section: 'matches',  tKey: 'dashboard.tab_matches' },
-  { icon: '↗', section: 'progress', tKey: 'dashboard.tab_progress' },
-  { icon: '◌', section: 'settings', tKey: 'dashboard.tab_settings' },
+  { icon: '🗺️', section: 'guide',    tKey: 'dashboard.tab_guide' },
+  { icon: '🎯', section: 'matches',  tKey: 'dashboard.tab_matches' },
+  { icon: '📈', section: 'progress', tKey: 'dashboard.tab_progress' },
+  { icon: '⚙️', section: 'settings', tKey: 'dashboard.tab_settings' },
 ]
 
 /** Convert English path name to i18n slug key */
@@ -56,10 +56,10 @@ function pathSlug(name: string): string {
 }
 
 function activityIcon(type: string) {
-  if (type === 'guide_started') return '→'
-  if (type === 'week_completed') return '✓'
-  if (type === 'checkin_submitted') return '↺'
-  return '★'
+  if (type === 'guide_started') return '🚀'
+  if (type === 'week_completed') return '✅'
+  if (type === 'checkin_submitted') return '📝'
+  return '⭐'
 }
 
 export default function DashboardClient({
@@ -295,10 +295,10 @@ export default function DashboardClient({
             {/* Stats row */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {[
-                { label: t('dashboard.active_guide'), value: `${guides.length}/${guideLimit}`, icon: '▣', sub: isPro ? t('dashboard.pro_badge') : t('dashboard.free_badge') },
-                { label: t('dashboard.tab_progress'), value: totalWeeksCompleted, icon: '✓', sub: t('dashboard.weeks_completed') },
-                { label: t('dashboard.check_ins'), value: totalCheckIns, icon: '↺', sub: t('dashboard.check_ins') },
-                { label: '%', value: guides.length > 0 ? `${Math.round((totalWeeksCompleted / (guides.length * 12)) * 100)}%` : '—', icon: '◎', sub: t('dashboard.12_wks_label') },
+                { label: t('dashboard.active_guide'), value: `${guides.length}/${guideLimit}`, icon: '📋', sub: isPro ? t('dashboard.pro_badge') : t('dashboard.free_badge') },
+                { label: t('dashboard.tab_progress'), value: totalWeeksCompleted, icon: '✅', sub: t('dashboard.weeks_completed') },
+                { label: t('dashboard.check_ins'), value: totalCheckIns, icon: '📝', sub: t('dashboard.check_ins') },
+                { label: '%', value: guides.length > 0 ? `${Math.round((totalWeeksCompleted / (guides.length * 12)) * 100)}%` : '—', icon: '🎯', sub: t('dashboard.12_wks_label') },
               ].map(s => (
                 <div key={s.label} className="bg-white/5 border border-white/10 rounded-xl p-4 text-center">
                   <div className="text-xl mb-1">{s.icon}</div>
@@ -364,16 +364,16 @@ export default function DashboardClient({
                   </Link>
                   <button
                     onClick={() => setConfirmDeleteId(activeGuide.id)}
-                    className="text-slate-600 hover:text-red-400 transition-colors"
+                    className="text-slate-600 hover:text-red-400 text-sm transition-colors"
                     title={t('dashboard.delete_guide')}
                   >
-                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                    🗑️
                   </button>
                 </div>
               </div>
             ) : (
               <div className="bg-white/5 border border-white/10 rounded-2xl p-8 text-center">
-                <div className="flex justify-center mb-3"><svg className="w-10 h-10 text-emerald-400/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
+                <div className="text-4xl mb-3">🚀</div>
                 <h2 className="text-xl font-bold text-white mb-2">{t('dashboard.no_guide')}</h2>
                 <p className="text-slate-400 text-sm mb-5">
                   {t('dashboard.start_guide')}
@@ -405,7 +405,7 @@ export default function DashboardClient({
                       onClick={() => setShowMassConfirm(true)}
                       className="flex items-center gap-1.5 text-xs bg-red-500/15 hover:bg-red-500/25 border border-red-500/30 text-red-400 font-semibold px-3 py-1.5 rounded-lg transition-colors"
                     >
-                      ✕ {t('dashboard.delete_n_selected', { n: selected.size })}
+                      🗑️ {t('dashboard.delete_n_selected', { n: selected.size })}
                     </button>
                   )}
                 </div>
@@ -546,10 +546,10 @@ export default function DashboardClient({
 
             <div className="grid grid-cols-2 gap-4">
               {[
-                { label: t('dashboard.total_guides_label'), value: guides.length, icon: '▣' },
-                { label: t('dashboard.weeks_completed'), value: totalWeeksCompleted, icon: '✓' },
-                { label: t('dashboard.checkins_submitted_label'), value: totalCheckIns, icon: '↺' },
-                { label: t('dashboard.weeks_remaining_label'), value: Math.max(0, guides.length * 12 - totalWeeksCompleted), icon: '◎' },
+                { label: t('dashboard.total_guides_label'), value: guides.length, icon: '📋' },
+                { label: t('dashboard.weeks_completed'), value: totalWeeksCompleted, icon: '✅' },
+                { label: t('dashboard.checkins_submitted_label'), value: totalCheckIns, icon: '📝' },
+                { label: t('dashboard.weeks_remaining_label'), value: Math.max(0, guides.length * 12 - totalWeeksCompleted), icon: '🎯' },
               ].map(s => (
                 <div key={s.label} className="bg-white/5 border border-white/10 rounded-xl p-5">
                   <div className="flex items-start justify-between mb-3">
@@ -794,9 +794,7 @@ export default function DashboardClient({
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
             <div className="bg-slate-900 border border-red-900/50 rounded-2xl w-full max-w-sm p-6 shadow-2xl pointer-events-auto">
               <div className="text-center mb-5">
-                <div className="w-12 h-12 rounded-full bg-red-950/60 border border-red-900/60 flex items-center justify-center mx-auto mb-3">
-                  <svg className="w-5 h-5 text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
-                </div>
+                <div className="w-12 h-12 rounded-full bg-red-950/60 border border-red-900/60 flex items-center justify-center text-2xl mx-auto mb-3">🗑️</div>
                 <h3 className="text-lg font-bold text-white mb-2">{t('dashboard.delete_account_title')}</h3>
                 <p className="text-slate-400 text-sm leading-relaxed">
                   {t('dashboard.delete_account_body')}
@@ -840,7 +838,7 @@ export default function DashboardClient({
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
             <div className="bg-slate-900 border border-red-900/50 rounded-2xl w-full max-w-sm p-6 shadow-2xl pointer-events-auto">
               <div className="text-center mb-5">
-                <div className="w-12 h-12 rounded-full bg-red-950/60 border border-red-900/60 flex items-center justify-center mx-auto mb-3"><svg className="w-5 h-5 text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></div>
+                <div className="w-12 h-12 rounded-full bg-red-950/60 border border-red-900/60 flex items-center justify-center text-2xl mx-auto mb-3">🗑️</div>
                 <h3 className="text-lg font-bold text-white mb-2">{t('dashboard.mass_delete_title', { n: selected.size })}</h3>
                 <p className="text-slate-400 text-sm leading-relaxed">
                   {t('dashboard.mass_delete_body')}
@@ -880,7 +878,7 @@ export default function DashboardClient({
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
               <div className="bg-slate-900 border border-red-900/50 rounded-2xl w-full max-w-sm p-6 shadow-2xl pointer-events-auto">
                 <div className="text-center mb-5">
-                  <div className="w-12 h-12 rounded-full bg-red-950/60 border border-red-900/60 flex items-center justify-center mx-auto mb-3"><svg className="w-5 h-5 text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></div>
+                  <div className="w-12 h-12 rounded-full bg-red-950/60 border border-red-900/60 flex items-center justify-center text-2xl mx-auto mb-3">🗑️</div>
                   <h3 className="text-lg font-bold text-white mb-2">{t('dashboard.delete_guide_title')}</h3>
                   <p className="text-slate-400 text-sm leading-relaxed">
                     {t('dashboard.delete_guide_body', { path: tPathName(g.path_name), n: g.weeks_unlocked })}

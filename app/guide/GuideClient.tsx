@@ -323,7 +323,7 @@ function DeleteConfirmModal({
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
         <div className="bg-gray-900 border border-red-900/50 rounded-2xl w-full max-w-sm p-6 shadow-2xl pointer-events-auto">
           <div className="text-center mb-5">
-            <div className="w-12 h-12 rounded-full bg-red-950/60 border border-red-900/60 flex items-center justify-center mx-auto mb-3"><svg className="w-5 h-5 text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></div>
+            <div className="w-12 h-12 rounded-full bg-red-950/60 border border-red-900/60 flex items-center justify-center text-2xl mx-auto mb-3">🗑️</div>
             <h3 className="text-lg font-bold text-white mb-2">{t('guide.delete_title')}</h3>
             <p className="text-gray-400 text-sm leading-relaxed">
               {t('guide.delete_desc', { path: pathName })}
@@ -748,7 +748,7 @@ export default function GuideClient({
   const NUDGES = [
     t('guide.coach_title') + ' 💬',
     t('guide.coach_empty'),
-    t('guide.coach_title') + ' →',
+    t('guide.coach_title') + ' 🔥',
     t('guide.coach_title'),
     t('guide.coach_title') + ' 💡',
   ]
@@ -917,7 +917,7 @@ export default function GuideClient({
                   'text-gray-700 cursor-not-allowed'
                 }`}>
                 <span className="shrink-0 w-4 text-center text-xs">
-                  {allCriteriaDone ? '✓' : planLocked ? '★' : !canAccess ? '·' : n}
+                  {allCriteriaDone ? '✓' : planLocked ? '⭐' : !canAccess ? '🔒' : n}
                 </span>
                 <span className="truncate flex-1">{week ? week.theme : t('guide.week_label', { n })}</span>
                 {planLocked && <span className="text-xs text-emerald-500 shrink-0">{t('guide.pro_tag')}</span>}
@@ -979,7 +979,7 @@ export default function GuideClient({
                 }`}
               >
                 W{n}
-                {allCriteriaDone ? <span className="text-emerald-400">✓</span> : planLocked ? <span className="text-emerald-500 text-xs">★</span> : null}
+                {allCriteriaDone ? <span className="text-emerald-400">✓</span> : planLocked ? <span className="text-xs">⭐</span> : null}
               </button>
             )
           })}
@@ -1012,7 +1012,7 @@ export default function GuideClient({
             <div className="text-center py-24">
               {isPlanLocked(activeWeek) ? (
                 <div>
-                  <div className="flex justify-center mb-4"><svg className="w-10 h-10 text-emerald-400/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+                  <div className="text-5xl mb-4">⭐</div>
                   <p className="text-white font-semibold mb-2">{t('guide.pro_week_title', { n: activeWeek })}</p>
                   <p className="text-gray-500 text-sm mb-5">{t('guide.pro_week_desc', { n: FREE_WEEK_LIMIT })}</p>
                   <button
@@ -1024,7 +1024,7 @@ export default function GuideClient({
                 </div>
               ) : (
                 <div>
-                  <div className="flex justify-center mb-4"><svg className="w-10 h-10 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+                  <div className="text-5xl mb-4">🔒</div>
                   <p className="text-gray-500 text-sm">{t('guide.locked_week_desc', { n: activeWeek - 1 })}</p>
                 </div>
               )}
