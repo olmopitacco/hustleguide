@@ -217,7 +217,12 @@ function CheckinModal({
         }),
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error ?? 'Failed to generate next week')
+      if (!res.ok) {
+        const errMsg = data.error === 'PRO_REQUIRED'
+          ? t('guide.pro_week_desc', { n: 2 })
+          : (data.error ?? t('common.error'))
+        throw new Error(errMsg)
+      }
       onSuccess(data.week)
     } catch (err) {
       setError((err as Error).message)
@@ -1049,7 +1054,7 @@ export default function GuideClient({
         />
       )}
 
-      {showUpgrade && <UpgradeModal onClose={() => setShowUpgrade(false)} trigger="Weeks 3–12 require a Pro plan." />}
+      {showUpgrade && <UpgradeModal onClose={() => setShowUpgrade(false)} trigger={t('guide.pro_week_title', { n: 3 })} />}
 
       {showChat && (
         <ChatPanel

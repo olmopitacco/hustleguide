@@ -50,36 +50,16 @@ const NAV_SECTIONS = [
   { icon: '◌', section: 'settings', tKey: 'dashboard.tab_settings' },
 ]
 
-const MOTIVATIONAL = [
-  "Every expert was once a beginner. Your first $100 online is closer than you think.",
-  "The hustle you start today is the income stream you'll thank yourself for next year.",
-  "Most people quit at week 2. You're still here — that's already the edge.",
-  "Your skills have value. You just need to find the right buyers.",
-  "Small consistent actions compound into big results. Keep going.",
-]
+/** Convert English path name to i18n slug key */
+function pathSlug(name: string): string {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '')
+}
 
 function activityIcon(type: string) {
   if (type === 'guide_started') return '→'
   if (type === 'week_completed') return '✓'
   if (type === 'checkin_submitted') return '↺'
   return '★'
-}
-
-function activityLabel(activity: Activity) {
-  if (activity.type === 'guide_started') return `Started "${activity.payload.path_name}" guide`
-  if (activity.type === 'week_completed') return `Completed Week ${activity.payload.week_number} of "${activity.payload.path_name}"`
-  if (activity.type === 'checkin_submitted') return `Submitted Week ${activity.payload.week_number} check-in`
-  return 'Activity'
-}
-
-function timeAgo(dateStr: string) {
-  const diff = Date.now() - new Date(dateStr).getTime()
-  const days = Math.floor(diff / 86400000)
-  const hours = Math.floor(diff / 3600000)
-  const mins = Math.floor(diff / 60000)
-  if (days > 0) return `${days}d ago`
-  if (hours > 0) return `${hours}h ago`
-  return `${mins}m ago`
 }
 
 export default function DashboardClient({
@@ -139,6 +119,7 @@ export default function DashboardClient({
     setMassDeleting(false)
     router.refresh()
   }
+
   async function handleRetakeQuiz() {
     setRetaking(true)
     try {
@@ -176,33 +157,68 @@ export default function DashboardClient({
         router.refresh()
       } else {
         const data = await res.json()
-        alert(data.error ?? 'Failed to delete guide')
+        alert(data.error ?? t('common.error'))
       }
     } catch {
-      alert('Failed to delete guide')
+      alert(t('common.error'))
     } finally {
       setDeletingId(null)
       setConfirmDeleteId(null)
     }
   }
 
-  const motivational = MOTIVATIONAL[Math.floor(Date.now() / 86400000) % MOTIVATIONAL.length]
+  // Motivational message — rotate daily, fully translated
+  const motivationalIndex = Math.floor(Date.now() / 86400000) % 5
+  const motivational = t(`dashboard.motivational_${motivationalIndex}`)
+
+  // Translated path name helper
+  function tPathName(name: string): string {
+    const key = `paths.${pathSlug(name)}.name`
+    const translated = t(key)
+    // Fall back to original name if key not found (returns the key itself)
+    return translated === key ? name : translated
+  }
+
+  function tPathDesc(name: string): string {
+    const key = `paths.${pathSlug(name)}.desc`
+    const translated = t(key)
+    return translated === key ? '' : translated
+  }
+
+  // Translated activity label
+  function activityLabel(activity: Activity): string {
+    if (activity.type === 'guide_started') return t('dashboard.activity_guide_started', { path: String(activity.payload.path_name ?? '') })
+    if (activity.type === 'week_completed') return t('dashboard.activity_week_completed', { week: String(activity.payload.week_number ?? ''), path: String(activity.payload.path_name ?? '') })
+    if (activity.type === 'checkin_submitted') return t('dashboard.activity_checkin', { week: String(activity.payload.week_number ?? '') })
+    return t('common.loading')
+  }
+
+  // Translated time-ago
+  function timeAgo(dateStr: string): string {
+    const diff = Date.now() - new Date(dateStr).getTime()
+    const days = Math.floor(diff / 86400000)
+    const hours = Math.floor(diff / 3600000)
+    const mins = Math.floor(diff / 60000)
+    if (days > 0) return t('dashboard.time_ago_days', { n: days })
+    if (hours > 0) return t('dashboard.time_ago_hours', { n: hours })
+    return t('dashboard.time_ago_mins', { n: mins })
+  }
 
   async function handleCancel() {
-    if (!confirm('Are you sure you want to cancel your Pro subscription? You\'ll keep access until the end of your billing period.')) return
+    if (!confirm(t('dashboard.cancel_sub_confirm'))) return
     setCancelLoading(true)
     setCancelMsg('')
     try {
       const res = await fetch('/api/stripe/cancel', { method: 'POST' })
       const data = await res.json()
       if (data.cancelled) {
-        const end = data.end_date ? new Date(data.end_date).toLocaleDateString() : 'end of period'
-        setCancelMsg(`Subscription cancelled. You have Pro access until ${end}.`)
+        const end = data.end_date ? new Date(data.end_date).toLocaleDateString() : ''
+        setCancelMsg(t('dashboard.cancel_success_date', { date: end }))
       } else {
-        setCancelMsg(data.error ?? 'Something went wrong')
+        setCancelMsg(data.error ?? t('common.error'))
       }
     } catch {
-      setCancelMsg('Failed to cancel. Try again.')
+      setCancelMsg(t('dashboard.cancel_failed'))
     } finally {
       setCancelLoading(false)
     }
@@ -244,7 +260,7 @@ export default function DashboardClient({
           )}
           {isPro && (
             <div className="px-3 py-2 text-xs text-green-400 font-medium flex items-center gap-2">
-              <span>✓</span> Pro Member
+              <span>✓</span> {t('dashboard.pro_member')}
             </div>
           )}
           <div className="px-2">
@@ -252,7 +268,7 @@ export default function DashboardClient({
           </div>
           <form action="/auth/signout" method="post">
             <button className="text-slate-500 hover:text-slate-300 text-xs px-2 transition-colors">
-              Sign out
+              {t('dashboard.sign_out')}
             </button>
           </form>
         </div>
@@ -282,7 +298,7 @@ export default function DashboardClient({
                 { label: t('dashboard.active_guide'), value: `${guides.length}/${guideLimit}`, icon: '▣', sub: isPro ? t('dashboard.pro_badge') : t('dashboard.free_badge') },
                 { label: t('dashboard.tab_progress'), value: totalWeeksCompleted, icon: '✓', sub: t('dashboard.weeks_completed') },
                 { label: t('dashboard.check_ins'), value: totalCheckIns, icon: '↺', sub: t('dashboard.check_ins') },
-                { label: '%', value: guides.length > 0 ? `${Math.round((totalWeeksCompleted / (guides.length * 12)) * 100)}%` : '—', icon: '◎', sub: '12 wks' },
+                { label: '%', value: guides.length > 0 ? `${Math.round((totalWeeksCompleted / (guides.length * 12)) * 100)}%` : '—', icon: '◎', sub: t('dashboard.12_wks_label') },
               ].map(s => (
                 <div key={s.label} className="bg-white/5 border border-white/10 rounded-xl p-4 text-center">
                   <div className="text-xl mb-1">{s.icon}</div>
@@ -297,11 +313,13 @@ export default function DashboardClient({
             {atGuideLimit && (
               <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl px-4 py-3 flex items-center justify-between">
                 <span className="text-emerald-300 text-sm">
-                  {isPro ? `Max ${PRO_GUIDE_LIMIT} guides on Pro.` : 'Free plan: 1 guide max.'} Delete a guide to create another.
+                  {isPro
+                    ? t('dashboard.plan_limit_pro', { n: PRO_GUIDE_LIMIT })
+                    : t('dashboard.plan_limit_free')}
                 </span>
                 {!isPro && (
                   <button onClick={() => setShowUpgrade(true)} className="text-xs bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 font-bold px-3 py-1.5 rounded-lg transition-colors">
-                    Upgrade
+                    {t('dashboard.upgrade_btn_short')}
                   </button>
                 )}
               </div>
@@ -313,9 +331,9 @@ export default function DashboardClient({
                 <div className="flex items-start justify-between mb-4">
                   <div>
                     <div className="text-xs text-emerald-400 font-bold uppercase tracking-wider mb-1">{t('dashboard.active_guide')}</div>
-                    <h2 className="text-xl font-black text-white">{activeGuide.path_name}</h2>
+                    <h2 className="text-xl font-black text-white">{tPathName(activeGuide.path_name)}</h2>
                     <p className="text-slate-400 text-sm mt-1">
-                      Week {activeGuide.weeks_unlocked} of 12 in progress
+                      {t('dashboard.week_in_progress', { n: activeGuide.weeks_unlocked })}
                     </p>
                   </div>
                   <div className="text-3xl">🗺️</div>
@@ -323,8 +341,8 @@ export default function DashboardClient({
                 {/* Progress bar */}
                 <div className="mb-2">
                   <div className="flex justify-between text-xs text-slate-500 mb-1.5">
-                    <span>Progress</span>
-                    <span>{activeGuide.weeks_unlocked} / 12 weeks</span>
+                    <span>{t('dashboard.progress_label')}</span>
+                    <span>{t('dashboard.progress_of_12', { n: activeGuide.weeks_unlocked })}</span>
                   </div>
                   <div className="h-2 bg-white/10 rounded-full overflow-hidden">
                     <div
@@ -334,20 +352,20 @@ export default function DashboardClient({
                   </div>
                 </div>
                 <div className="text-xs text-slate-600 mb-5">
-                  {Math.round((activeGuide.weeks_unlocked / 12) * 100)}% complete
-                  {!isPro && activeGuide.weeks_unlocked > 2 && ' · Pro required for weeks 3+'}
+                  {t('dashboard.percent_complete', { pct: Math.round((activeGuide.weeks_unlocked / 12) * 100) })}
+                  {!isPro && activeGuide.weeks_unlocked > 2 && ` ${t('dashboard.pro_weeks_note')}`}
                 </div>
                 <div className="flex items-center gap-3">
                   <Link
                     href={`/guide?path=${encodeURIComponent(activeGuide.path_name)}&id=${activeGuide.id}`}
                     className="inline-block bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-white font-bold px-6 py-2.5 rounded-xl transition-all text-sm"
                   >
-                    Continue Week {activeGuide.weeks_unlocked} →
+                    {t('dashboard.continue_week', { n: activeGuide.weeks_unlocked })}
                   </Link>
                   <button
                     onClick={() => setConfirmDeleteId(activeGuide.id)}
                     className="text-slate-600 hover:text-red-400 transition-colors"
-                    title="Delete guide"
+                    title={t('dashboard.delete_guide')}
                   >
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
                   </button>
@@ -379,7 +397,7 @@ export default function DashboardClient({
                       onClick={toggleSelectAll}
                       className="text-xs text-slate-500 hover:text-slate-300 transition-colors"
                     >
-                      {selected.size === guides.length ? 'Deselect all' : 'Select all'}
+                      {selected.size === guides.length ? t('dashboard.deselect_all') : t('dashboard.select_all')}
                     </button>
                   </div>
                   {selected.size > 0 && (
@@ -387,7 +405,7 @@ export default function DashboardClient({
                       onClick={() => setShowMassConfirm(true)}
                       className="flex items-center gap-1.5 text-xs bg-red-500/15 hover:bg-red-500/25 border border-red-500/30 text-red-400 font-semibold px-3 py-1.5 rounded-lg transition-colors"
                     >
-                      ✕ Delete {selected.size} selected
+                      ✕ {t('dashboard.delete_n_selected', { n: selected.size })}
                     </button>
                   )}
                 </div>
@@ -412,7 +430,7 @@ export default function DashboardClient({
                         </div>
 
                         <div className="flex-1 min-w-0">
-                          <div className="text-white text-sm font-medium">{g.path_name}</div>
+                          <div className="text-white text-sm font-medium">{tPathName(g.path_name)}</div>
                           <div className="flex items-center gap-2 mt-0.5">
                             <div className="w-20 h-1 bg-white/10 rounded-full overflow-hidden">
                               <div
@@ -420,7 +438,7 @@ export default function DashboardClient({
                                 style={{ width: `${(g.weeks_unlocked / 12) * 100}%` }}
                               />
                             </div>
-                            <span className="text-slate-500 text-xs">Week {g.weeks_unlocked}/12</span>
+                            <span className="text-slate-500 text-xs">{t('dashboard.week_n_slash_12', { n: g.weeks_unlocked })}</span>
                           </div>
                         </div>
 
@@ -429,7 +447,7 @@ export default function DashboardClient({
                           onClick={e => e.stopPropagation()}
                           className="text-emerald-400 hover:text-emerald-300 text-xs opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
                         >
-                          Open →
+                          {t('dashboard.open_guide')}
                         </Link>
                       </div>
                     )
@@ -458,20 +476,20 @@ export default function DashboardClient({
 
             {/* Start new guide */}
             <div className="flex items-center justify-between pt-2">
-              <span className="text-slate-500 text-sm">Want to explore a different path?</span>
+              <span className="text-slate-500 text-sm">{t('dashboard.explore_prompt')}</span>
               {isPro || guides.length === 0 ? (
                 <Link
                   href="/onboarding"
                   className="text-emerald-400 hover:text-emerald-300 text-sm font-medium transition-colors"
                 >
-                  + New Guide
+                  {t('dashboard.new_guide_btn')}
                 </Link>
               ) : (
                 <button
                   onClick={() => setShowUpgrade(true)}
                   className="text-emerald-400 hover:text-emerald-300 text-sm font-medium transition-colors"
                 >
-                  + New Guide (Pro)
+                  {t('dashboard.new_guide_pro_btn')}
                 </button>
               )}
             </div>
@@ -493,11 +511,11 @@ export default function DashboardClient({
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <span className="text-xl">{p.emoji}</span>
-                        <span className="text-white font-bold text-sm">{p.name}</span>
+                        <span className="text-white font-bold text-sm">{tPathName(p.name)}</span>
                       </div>
                       <span className="text-emerald-400 text-xs font-bold">{p.matchPercent}%</span>
                     </div>
-                    <p className="text-slate-400 text-xs leading-relaxed mb-3">{p.description}</p>
+                    <p className="text-slate-400 text-xs leading-relaxed mb-3">{tPathDesc(p.name) || p.description}</p>
                     <div className="h-1 bg-white/10 rounded-full overflow-hidden">
                       <div
                         className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full"
@@ -509,9 +527,9 @@ export default function DashboardClient({
               </div>
             ) : (
               <div className="bg-white/5 border border-white/10 rounded-2xl p-8 text-center">
-                <p className="text-slate-400">Complete the questionnaire to see your matched paths.</p>
+                <p className="text-slate-400">{t('dashboard.complete_questionnaire')}</p>
                 <Link href="/onboarding" className="inline-block mt-4 text-emerald-400 hover:text-emerald-300 text-sm font-medium">
-                  Take Questionnaire →
+                  {t('dashboard.take_questionnaire')}
                 </Link>
               </div>
             )}
@@ -528,10 +546,10 @@ export default function DashboardClient({
 
             <div className="grid grid-cols-2 gap-4">
               {[
-                { label: 'Total Guides', value: guides.length, icon: '▣', color: 'emerald' },
-                { label: 'Weeks Completed', value: totalWeeksCompleted, icon: '✓', color: 'green' },
-                { label: 'Check-Ins Submitted', value: totalCheckIns, icon: '↺', color: 'blue' },
-                { label: 'Weeks Remaining', value: Math.max(0, guides.length * 12 - totalWeeksCompleted), icon: '◎', color: 'teal' },
+                { label: t('dashboard.total_guides_label'), value: guides.length, icon: '▣' },
+                { label: t('dashboard.weeks_completed'), value: totalWeeksCompleted, icon: '✓' },
+                { label: t('dashboard.checkins_submitted_label'), value: totalCheckIns, icon: '↺' },
+                { label: t('dashboard.weeks_remaining_label'), value: Math.max(0, guides.length * 12 - totalWeeksCompleted), icon: '◎' },
               ].map(s => (
                 <div key={s.label} className="bg-white/5 border border-white/10 rounded-xl p-5">
                   <div className="flex items-start justify-between mb-3">
@@ -545,12 +563,12 @@ export default function DashboardClient({
 
             {guides.length > 0 && (
               <div className="space-y-4">
-                <h3 className="text-white font-bold">Guide Progress</h3>
+                <h3 className="text-white font-bold">{t('dashboard.guide_progress_label')}</h3>
                 {guides.map(g => (
                   <div key={g.id} className="bg-white/5 border border-white/10 rounded-xl p-5">
                     <div className="flex items-center justify-between mb-3">
-                      <span className="text-white font-medium">{g.path_name}</span>
-                      <span className="text-slate-400 text-sm">{g.weeks_unlocked} / 12 weeks</span>
+                      <span className="text-white font-medium">{tPathName(g.path_name)}</span>
+                      <span className="text-slate-400 text-sm">{t('dashboard.progress_of_12', { n: g.weeks_unlocked })}</span>
                     </div>
                     <div className="h-2 bg-white/10 rounded-full overflow-hidden">
                       <div
@@ -584,7 +602,7 @@ export default function DashboardClient({
                         ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
                         : 'bg-white/10 text-slate-400'
                     }`}>
-                      {isPro ? 'Pro' : 'Free'}
+                      {isPro ? t('landing_pricing.pro_label') : t('landing_pricing.free_label')}
                     </span>
                   </div>
                   <p className="text-slate-500 text-xs">
@@ -596,7 +614,7 @@ export default function DashboardClient({
                     onClick={() => setShowUpgrade(true)}
                     className="bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-white font-bold px-4 py-2 rounded-xl text-sm transition-all"
                   >
-                    Upgrade
+                    {t('dashboard.upgrade_btn_short')}
                   </button>
                 )}
               </div>
@@ -628,7 +646,7 @@ export default function DashboardClient({
                       <span className="text-lg w-7 text-center shrink-0">{p.emoji}</span>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-slate-200 text-sm font-medium truncate">{p.name}</span>
+                          <span className="text-slate-200 text-sm font-medium truncate">{tPathName(p.name)}</span>
                           <span className="text-emerald-400 text-xs font-bold ml-2 shrink-0">{p.matchPercent}%</span>
                         </div>
                         <div className="h-1 bg-white/10 rounded-full overflow-hidden">
@@ -642,7 +660,7 @@ export default function DashboardClient({
                   ))}
                 </div>
               ) : (
-                <p className="text-slate-500 text-sm mb-5">No matches yet — take the quiz to see your path matches.</p>
+                <p className="text-slate-500 text-sm mb-5">{t('dashboard.no_matches_yet')}</p>
               )}
               <button
                 onClick={() => setShowRetakeConfirm(true)}
@@ -654,10 +672,10 @@ export default function DashboardClient({
 
             {/* Account */}
             <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-              <h3 className="text-white font-bold mb-4">Account</h3>
+              <h3 className="text-white font-bold mb-4">{t('dashboard.account_section')}</h3>
               <form action="/auth/signout" method="post">
                 <button className="text-slate-400 hover:text-white text-sm transition-colors">
-                  Sign out →
+                  {t('dashboard.sign_out_arrow')}
                 </button>
               </form>
             </div>
@@ -703,8 +721,8 @@ export default function DashboardClient({
 
             {/* Legal links */}
             <div className="flex gap-4 pt-2">
-              <Link href="/privacy" className="text-slate-600 hover:text-slate-400 text-xs transition-colors">Privacy Policy</Link>
-              <Link href="/terms" className="text-slate-600 hover:text-slate-400 text-xs transition-colors">Terms of Service</Link>
+              <Link href="/privacy" className="text-slate-600 hover:text-slate-400 text-xs transition-colors">{t('dashboard.privacy_policy')}</Link>
+              <Link href="/terms" className="text-slate-600 hover:text-slate-400 text-xs transition-colors">{t('dashboard.terms_of_service')}</Link>
             </div>
           </div>
         )}
@@ -729,7 +747,7 @@ export default function DashboardClient({
       {showUpgrade && (
         <UpgradeModal
           onClose={() => setShowUpgrade(false)}
-          trigger={!isPro ? 'Free plan is limited to 1 guide. Pro allows up to 3.' : undefined}
+          trigger={!isPro ? t('dashboard.upgrade_trigger') : undefined}
         />
       )}
 
@@ -743,9 +761,9 @@ export default function DashboardClient({
                 <div className="w-12 h-12 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center mx-auto mb-3">
                   <svg className="w-5 h-5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
                 </div>
-                <h3 className="text-lg font-bold text-white mb-2">Retake the quiz?</h3>
+                <h3 className="text-lg font-bold text-white mb-2">{t('dashboard.retake_title')}</h3>
                 <p className="text-slate-400 text-sm leading-relaxed">
-                  Retaking will generate fresh path matches. Your existing guides and all progress will be kept exactly as they are.
+                  {t('dashboard.retake_body')}
                 </p>
               </div>
               <div className="flex gap-3">
@@ -754,14 +772,14 @@ export default function DashboardClient({
                   disabled={retaking}
                   className="flex-1 py-2.5 rounded-xl border border-slate-700 text-slate-400 hover:text-white hover:border-slate-500 transition-colors text-sm font-medium"
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </button>
                 <button
                   onClick={handleRetakeQuiz}
                   disabled={retaking}
                   className="flex-1 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-white font-semibold transition-colors text-sm"
                 >
-                  {retaking ? 'Loading...' : 'Yes, retake'}
+                  {retaking ? t('dashboard.loading_label') : t('dashboard.retake_yes')}
                 </button>
               </div>
             </div>
@@ -779,13 +797,13 @@ export default function DashboardClient({
                 <div className="w-12 h-12 rounded-full bg-red-950/60 border border-red-900/60 flex items-center justify-center mx-auto mb-3">
                   <svg className="w-5 h-5 text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
                 </div>
-                <h3 className="text-lg font-bold text-white mb-2">Delete your account?</h3>
+                <h3 className="text-lg font-bold text-white mb-2">{t('dashboard.delete_account_title')}</h3>
                 <p className="text-slate-400 text-sm leading-relaxed">
-                  This permanently deletes your account, all guides, check-ins, and progress. This cannot be undone.
+                  {t('dashboard.delete_account_body')}
                 </p>
               </div>
               <div className="mb-4">
-                <label className="text-xs text-slate-500 block mb-1.5">Type <span className="text-white font-mono font-bold">DELETE</span> to confirm</label>
+                <label className="text-xs text-slate-500 block mb-1.5">{t('dashboard.delete_type_label')}</label>
                 <input
                   type="text"
                   value={deleteConfirmText}
@@ -800,14 +818,14 @@ export default function DashboardClient({
                   disabled={deletingAccount}
                   className="flex-1 py-2.5 rounded-xl border border-slate-700 text-slate-400 hover:text-white hover:border-slate-500 transition-colors text-sm font-medium"
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </button>
                 <button
                   onClick={handleDeleteAccount}
                   disabled={deleteConfirmText !== 'DELETE' || deletingAccount}
                   className="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold transition-colors text-sm"
                 >
-                  {deletingAccount ? 'Deleting...' : 'Delete everything'}
+                  {deletingAccount ? t('dashboard.deleting_label') : t('dashboard.delete_everything_btn')}
                 </button>
               </div>
             </div>
@@ -823,13 +841,13 @@ export default function DashboardClient({
             <div className="bg-slate-900 border border-red-900/50 rounded-2xl w-full max-w-sm p-6 shadow-2xl pointer-events-auto">
               <div className="text-center mb-5">
                 <div className="w-12 h-12 rounded-full bg-red-950/60 border border-red-900/60 flex items-center justify-center mx-auto mb-3"><svg className="w-5 h-5 text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></div>
-                <h3 className="text-lg font-bold text-white mb-2">Delete {selected.size} guide{selected.size !== 1 ? 's' : ''}?</h3>
+                <h3 className="text-lg font-bold text-white mb-2">{t('dashboard.mass_delete_title', { n: selected.size })}</h3>
                 <p className="text-slate-400 text-sm leading-relaxed">
-                  All progress, check-ins, and plans for the selected guides will be permanently lost.
+                  {t('dashboard.mass_delete_body')}
                 </p>
               </div>
               <div className="bg-red-950/30 border border-red-900/40 rounded-xl p-3 mb-5">
-                <p className="text-red-400 text-xs text-center font-medium">This action cannot be undone.</p>
+                <p className="text-red-400 text-xs text-center font-medium">{t('dashboard.cannot_be_undone')}</p>
               </div>
               <div className="flex gap-3">
                 <button
@@ -837,14 +855,14 @@ export default function DashboardClient({
                   disabled={massDeleting}
                   className="flex-1 py-2.5 rounded-xl border border-slate-700 text-slate-400 hover:text-white hover:border-slate-500 transition-colors text-sm font-medium"
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </button>
                 <button
                   onClick={handleMassDelete}
                   disabled={massDeleting}
                   className="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 disabled:opacity-50 text-white font-semibold transition-colors text-sm"
                 >
-                  {massDeleting ? 'Deleting…' : `Delete ${selected.size}`}
+                  {massDeleting ? t('dashboard.deleting_label') : t('dashboard.delete_n_btn', { n: selected.size })}
                 </button>
               </div>
             </div>
@@ -863,14 +881,13 @@ export default function DashboardClient({
               <div className="bg-slate-900 border border-red-900/50 rounded-2xl w-full max-w-sm p-6 shadow-2xl pointer-events-auto">
                 <div className="text-center mb-5">
                   <div className="w-12 h-12 rounded-full bg-red-950/60 border border-red-900/60 flex items-center justify-center mx-auto mb-3"><svg className="w-5 h-5 text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></div>
-                  <h3 className="text-lg font-bold text-white mb-2">Delete this guide?</h3>
+                  <h3 className="text-lg font-bold text-white mb-2">{t('dashboard.delete_guide_title')}</h3>
                   <p className="text-slate-400 text-sm leading-relaxed">
-                    <span className="text-white font-semibold">{g.path_name}</span> — Week {g.weeks_unlocked} of 12.
-                    All progress, check-ins, and plans will be permanently lost.
+                    {t('dashboard.delete_guide_body', { path: tPathName(g.path_name), n: g.weeks_unlocked })}
                   </p>
                 </div>
                 <div className="bg-red-950/30 border border-red-900/40 rounded-xl p-3 mb-5">
-                  <p className="text-red-400 text-xs text-center font-medium">This action cannot be undone.</p>
+                  <p className="text-red-400 text-xs text-center font-medium">{t('dashboard.cannot_be_undone')}</p>
                 </div>
                 <div className="flex gap-3">
                   <button
@@ -878,14 +895,14 @@ export default function DashboardClient({
                     disabled={deletingId === confirmDeleteId}
                     className="flex-1 py-2.5 rounded-xl border border-slate-700 text-slate-400 hover:text-white hover:border-slate-500 transition-colors text-sm font-medium"
                   >
-                    Keep Guide
+                    {t('dashboard.keep_guide_btn')}
                   </button>
                   <button
                     onClick={() => handleDeleteGuide(confirmDeleteId)}
                     disabled={deletingId === confirmDeleteId}
                     className="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 disabled:opacity-50 text-white font-semibold transition-colors text-sm"
                   >
-                    {deletingId === confirmDeleteId ? 'Deleting…' : 'Yes, Delete'}
+                    {deletingId === confirmDeleteId ? t('dashboard.deleting_label') : t('dashboard.yes_delete_btn')}
                   </button>
                 </div>
               </div>

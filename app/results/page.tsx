@@ -21,7 +21,8 @@ export default async function ResultsPage() {
 
   if (!profileResult.data) redirect('/onboarding')
 
-  const scored = scorePaths(profileResult.data)
+  const profileLang = (profileResult.data as Record<string, unknown>)?.preferred_language as string | undefined
+  const scored = scorePaths(profileResult.data, profileLang ?? 'en')
   const top3 = scored.slice(0, 3)
   const rest = scored.slice(3)
   const displayName = userDataResult.data?.name?.split(' ')[0] ?? 'there'

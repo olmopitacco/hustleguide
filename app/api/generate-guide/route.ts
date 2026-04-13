@@ -46,7 +46,9 @@ function buildWeek1Prompt(profile: Record<string, unknown>, pathName: string): s
   const langName = LANGUAGE_NAMES[lang] ?? 'English'
   const location = profile.location ?? 'Not specified'
 
-  return `You are an expert business coach.
+  return `IMPORTANT: You must respond entirely in ${langName}. Every single word of your response must be in ${langName}. Do not use any English unless it is a proper noun like a platform name (e.g. Instagram, Canva, Google). All advice, explanations, task descriptions, tips, and examples must be in ${langName}.
+
+You are an expert business coach.
 Create a detailed, actionable Week 1 plan for someone starting ${pathName}.
 
 Profile:
@@ -58,8 +60,7 @@ Profile:
 - Hates: ${hates}
 - Work style: ${profile.preferences ?? 'Not specified'}
 
-IMPORTANT LANGUAGE & LOCALISATION RULES:
-- Generate ALL content in ${langName}.
+LOCALISATION RULES:
 - Reference platforms, tools, income figures, and examples that are relevant to the user's location (${location}) and country.
 - Use local currency and realistic local income figures where applicable.
 - Keep platform names, tool names, and brand names in their original form (do not translate proper nouns).

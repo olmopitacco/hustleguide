@@ -72,8 +72,9 @@ export default async function DashboardPage({
   const activeGuide = guides[0] ?? null
 
   // Other matched paths (excluding active guide's path)
+  const profileLang = (profile as Record<string, unknown> | null)?.preferred_language as string | undefined
   const otherPaths = profile
-    ? scorePaths(profile)
+    ? scorePaths(profile, profileLang ?? 'en')
         .filter(p => p.name !== activeGuide?.path_name)
         .slice(0, 8)
         .map(p => ({

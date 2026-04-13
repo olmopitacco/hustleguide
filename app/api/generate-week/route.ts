@@ -52,7 +52,9 @@ function buildNextWeekPrompt(
   const langName = LANGUAGE_NAMES[lang] ?? 'English'
   const location = profile.location ?? 'Not specified'
 
-  return `You are an expert business coach.
+  return `IMPORTANT: You must respond entirely in ${langName}. Every single word of your response must be in ${langName}. Do not use any English unless it is a proper noun like a platform name (e.g. Instagram, Canva, Google). All advice, explanations, task descriptions, tips, and examples must be in ${langName}.
+
+You are an expert business coach.
 
 The user is on a ${pathName} journey.
 
@@ -75,8 +77,7 @@ If they're ahead — push further and introduce more ambitious actions.
 
 Start with a "based_on_your_progress" field: 2 sentences explaining exactly how you customized this week specifically for them based on what they told you.
 
-IMPORTANT LANGUAGE & LOCALISATION RULES:
-- Generate ALL content in ${langName}.
+LOCALISATION RULES:
 - Reference platforms, tools, income figures, and examples relevant to the user's location (${location}).
 - Use local currency and realistic local income figures where applicable.
 - Keep platform names, tool names, and brand names in their original form.
@@ -113,7 +114,7 @@ async function handlePost(request: Request) {
   const isPro = userData?.subscription_status === 'pro'
   const nextWeekNumber = weekNumber + 1
   if (!isPro && nextWeekNumber > 2) {
-    return Response.json({ error: 'Weeks 3–12 require a Pro plan. Upgrade to continue.' }, { status: 403 })
+    return Response.json({ error: 'PRO_REQUIRED' }, { status: 403 })
   }
 
   const { data: profile } = await supabase
